@@ -1,6 +1,5 @@
 todo:
 - get complete checkin history
-- bucket intersections by day
 - include venue data in intersection
 - include checkin data in intersection (comments, photos, shouts)
 - timezones
@@ -19,3 +18,4 @@ later
 done:
 - store checkin history
 - basic intersection display
+- bucket intersections by day
