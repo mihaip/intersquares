@@ -1,0 +1,28 @@
+# The version of this file with the actual client IDs and secrets is not checked
+# in, please copy this file, give it the name foursquare_config.py, and
+# replace the placeholder values below with the data from
+# https://foursquare.com/oauth/
+
+class FoursquareConfig(object):
+    def __init__(self, client_id, client_secret, callback_url):
+        self.client_id = client_id
+        self.client_secret = client_secret
+        self.callback_url = callback_url
+
+__LOCAL_CONFIG = FoursquareConfig(
+    'LOCAL_CLIENT_ID_GOES_HERE',
+    'LCOAL_CLIENT_SECRET_GOES_HERE',
+    'http://localhost:8083/4sq/callback')
+
+__PROD_CONFIG = FoursquareConfig(
+    'PROD_CLIENT_ID_GOES_HERE',
+    'PROD_CLIENT_SECRET_GOES_HERE',
+    'http://intersquares.appspot.com/4sq/callback')
+
+def from_hostname(hostname):
+  if hostname == 'localhost':
+    return __LOCAL_CONFIG
+  elif hostname == 'intersquares.appspot.com':
+    return __PROD_CONFIG
+  else:
+    raise Exception('Unexpected hostname %s' % hostname)
