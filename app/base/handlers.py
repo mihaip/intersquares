@@ -42,6 +42,13 @@ class BaseHandler(webapp.RequestHandler):
     self._write_error(400)
     self.response.out.write('Input error: %s' % error_message)
 
+  def _generate_absolute_url(self, path):
+    parsed_request_url = urlparse.urlparse(self.request.url)
+    hostname = parsed_request_url.hostname
+    if parsed_request_url.port:
+      hostname += ':%d' % parsed_request_url.port
+    return 'http://%s/%s' % (hostname, path)
+
 class SessionHandler(BaseHandler):
   SESSION_COOKIE_NAME = 'sid'
 

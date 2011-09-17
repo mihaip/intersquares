@@ -27,8 +27,9 @@ def main():
           ('/checkins/update', handlers.checkins.UpdateCheckinsHandler),
           ('/checkins/clear', handlers.checkins.ClearCheckinsHandler),
 
-
+          # Intersects
           ('/checkins/intersect', handlers.checkins.IntersectCheckinsHandler),
+          ('/i/(.+)', handlers.checkins.ShortIntersectHandler),
       ],
       debug=True)
   util.run_wsgi_app(application)

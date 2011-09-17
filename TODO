@@ -2,7 +2,7 @@ todo:
 - get complete checkin history
 - include venue data in intersection
 - include checkin data in intersection (comments, photos, shouts)
-- timezones
+- handle self/self intersection
 
 ideas
 - stream on homepage with people who've recently signed up and want to be matched publicly
@@ -19,3 +19,4 @@ done:
 - store checkin history
 - basic intersection display
 - bucket intersections by day
+- timezones

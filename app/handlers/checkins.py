@@ -1,3 +1,5 @@
+import urllib
+
 import base.handlers
 import data.checkins
 import data.user
@@ -39,3 +41,8 @@ class IntersectCheckinsHandler(base.handlers.ApiHandler):
             'other_user': other_user,
             'intersection': intersection,
         })
+
+class ShortIntersectHandler(base.handlers.BaseHandler):
+  def get(self, external_id):
+    self.redirect(
+        '/checkins/intersect?external_id=%s' % urllib.quote(external_id))
