@@ -1,2 +1,2 @@
 *.pyc
-app/foursquare_config.py
+app/base/foursquare_config.py
