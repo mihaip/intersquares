@@ -1,4 +1,6 @@
 todo:
-- lots of things
+- api error handling
+- centralize urlfetch calls, use the same user agent
+- make switching between users faster (switch from /authenticate to /authorize?)
 
 done:

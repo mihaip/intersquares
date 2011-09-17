@@ -2,6 +2,7 @@ from google.appengine.api import urlfetch
 from django.utils import simplejson
 
 import base.handlers
+import data.session
 
 class FoursquareConnectHandler(base.handlers.FoursquareOAuthHandler):
   def get(self):
@@ -27,5 +28,28 @@ class FoursquareCallbackHandler(base.handlers.FoursquareOAuthHandler):
     user_info_json = urlfetch.fetch(user_info_url)
     user_info = simplejson.loads(user_info_json.content)
 
-    # TODO(mihaip): save the token
-    self.response.out.write(str(user_info))
+    foursquare_id = user_info['response']['user']['id']
+
+    session_id = data.session.Session.generate_session_id()
+
+    session = data.session.Session.get_by_foursquare_id(foursquare_id)
+    if session:
+      session.session_id = session_id
+      session.oauth_token = oauth_token
+    else:
+      session = data.session.Session(
+          session_id = session_id,
+          foursquare_id = foursquare_id,
+          oauth_token = oauth_token)
+    session.put()
+
+    self._set_request_session(session)
+
+    self.redirect('/')
+
+class SignOutHandler(base.handlers.SessionHandler):
+  def get(self):
+    # TODO(mihaip): should we remove the Foursquare session too? Otherwise
+    # since we use /authenticate, it's hard to switch users on the fly.
+    self._remove_request_session()
+    self.redirect('/')

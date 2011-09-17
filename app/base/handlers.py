@@ -1,9 +1,11 @@
+import Cookie
 import os
 import urlparse
 
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
 
+import data.session
 import foursquare_config
 
 class BaseHandler(webapp.RequestHandler):
@@ -27,7 +29,37 @@ class BaseHandler(webapp.RequestHandler):
     self.response.out.write(
         self._render_template(template_file_name, template_values))
 
-class FoursquareOAuthHandler(BaseHandler):
+class SessionHandler(BaseHandler):
+  SESSION_COOKIE_NAME = 'sid'
+
+  def _has_request_session(self):
+    return self.SESSION_COOKIE_NAME in self.request.cookies
+
+  def _get_session_from_request(self):
+    return data.session.Session.get_by_session_id(
+        self.request.cookies[self.SESSION_COOKIE_NAME])
+
+  def _set_request_session(self, session):
+    cookie = Cookie.SimpleCookie()
+    cookie[self.SESSION_COOKIE_NAME] = session.session_id
+    morsel = cookie[self.SESSION_COOKIE_NAME]
+    morsel['path'] = '/'
+    # TODO(mihaip): expiration?
+
+    self.response.headers.add_header(
+        'Set-Cookie', morsel.output(header='').lstrip())
+
+  def _remove_request_session(self):
+    cookie = Cookie.SimpleCookie()
+    cookie[self.SESSION_COOKIE_NAME] = 'expired'
+    morsel = cookie[self.SESSION_COOKIE_NAME]
+    morsel['path'] = '/'
+    morsel['expires'] = 'Sat, 1-Jan-2000 00:00:00'
+
+    self.response.headers.add_header(
+        'Set-Cookie', morsel.output(header='').lstrip())
+
+class FoursquareOAuthHandler(SessionHandler):
   def foursquare_config(self):
     hostname = urlparse.urlparse(self.request.url).hostname
     return foursquare_config.from_hostname(hostname)
