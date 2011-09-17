@@ -31,6 +31,17 @@ class BaseHandler(webapp.RequestHandler):
     self.response.out.write(
         self._render_template(template_file_name, template_values))
 
+  def _write_error(self, error_code):
+    self.response.headers['Content-Type'] = 'text/plain'
+    self.response.set_status(error_code)
+
+  def _write_not_found(self):
+    self._write_error(404)
+
+  def _write_input_error(self, error_message):
+    self._write_error(400)
+    self.response.out.write('Input error: %s' % error_message)
+
 class SessionHandler(BaseHandler):
   SESSION_COOKIE_NAME = 'sid'
 

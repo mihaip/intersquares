@@ -1,5 +1,8 @@
 todo:
 - get complete checkin history
+- bucket intersections by day
+- include venue data in intersection
+- include checkin data in intersection (comments, photos, shouts)
 
 ideas
 - stream on homepage with people who've recently signed up and want to be matched publicly
@@ -13,3 +16,4 @@ later
 
 done:
 - store checkin history
+- basic intersection display

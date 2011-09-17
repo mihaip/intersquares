@@ -21,6 +21,9 @@ def main():
           # data fetching
           ('/checkins/update', handlers.checkins.UpdateCheckinsHandler),
           ('/checkins/clear', handlers.checkins.ClearCheckinsHandler),
+
+
+          ('/checkins/intersect', handlers.checkins.IntersectCheckinsHandler),
       ],
       debug=True)
   util.run_wsgi_app(application)

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Intersquares</title>
+</head>
+<body>
+
+<p>
+  Intersections between {{ this_user.first_name }} ({{this_user.checkins.length }} checkins)
+  and
+  {{ other_user.first_name }}  ({{other_user.checkins.length }} checkins):
+</p>
+
+<ul>
+{% for this_user_checkin, other_user_checkin in intersection %}
+  <li><a href="https://foursquare.com/venue/{{ this_user_checkin.venue_id }}">VENUE NAME GOES HERE</a>
+  at
+  <a href="https://foursquare.com/user/{{this_user.foursquare_id }}/checkin/{{ this_user_checkin.id }}">{{ this_user_checkin.timestamp }}</a>
+  and
+  <a href="https://foursquare.com/user/{{other_user.foursquare_id }}/checkin/{{ other_user_checkin.id }}">{{ other_user_checkin.timestamp }}</a>.
+{% endfor %}
+</ul>
+
+</body>
+</html>

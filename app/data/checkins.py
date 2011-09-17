@@ -1,5 +1,54 @@
+import calendar
 import datetime
 import logging
+
+import base.interval_tree
+
+HERE_NOW_DELTA = datetime.timedelta(hours=2)
+TRAVEL_TIME_DELTA = datetime.timedelta(minutes=5)
+
+class CheckinInterval(object):
+  def __init__(self, checkin, next_checkin):
+      # TODO(mihaip): so many datetime conversions is probably a bad idea
+      self.start = calendar.timegm(checkin.timestamp.timetuple())
+      end_timestamp = checkin.timestamp + HERE_NOW_DELTA
+      if next_checkin and end_timestamp > next_checkin.timestamp:
+        # TODO(mihaip): travel time should be a function of distance
+        end_timestamp = next_checkin.timestamp - TRAVEL_TIME_DELTA
+      self.stop = calendar.timegm(end_timestamp.timetuple())
+      self.checkin = checkin
+
+def _get_intervals(checkins):
+  sorted_checkins = sorted(checkins, key=lambda checkin: checkin.timestamp)
+  intervals = []
+  for i in xrange(0, len(sorted_checkins) - 1):
+    intervals.append(
+        CheckinInterval(sorted_checkins[i], sorted_checkins[i + 1]))
+
+  if len(sorted_checkins):
+    intervals.append(CheckinInterval(sorted_checkins[-1], None))
+
+  return intervals
+
+def _compute_intersection(base_checkins, search_checkins):
+  # TODO(mihaip): also filter checkins for venues that only one of the users
+  # has visited.
+  base_checkins = [c for c in base_checkins if c.should_use()]
+  search_checkins = [c for c in search_checkins if c.should_use()]
+
+  base_intervals = _get_intervals(base_checkins)
+  search_intervals = _get_intervals(search_checkins)
+
+  base_tree = base.interval_tree.IntervalTree(base_intervals)
+
+  intersection = []
+  for search_interval in search_intervals:
+    overlap = base_tree.find(search_interval.start, search_interval.stop)
+    for base_interval in overlap:
+      if base_interval.checkin.venue_id == search_interval.checkin.venue_id:
+        intersection.append((base_interval.checkin, search_interval.checkin))
+
+  return intersection
 
 class Checkin(object):
   def __init__(self, json_data):
@@ -44,3 +93,8 @@ class Checkins(object):
       if not newest or newest.timestamp < checkin.timestamp:
         newest = checkin
     return newest
+
+  def intersection(self, other_checkins):
+    return _compute_intersection(
+        self._checkins_by_id.values(),
+        other_checkins._checkins_by_id.values())

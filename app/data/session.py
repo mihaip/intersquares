@@ -39,5 +39,9 @@ class Session(db.Model):
   def get_by_session_id(session_id):
     return Session.all().filter('session_id = ', session_id).get()
 
+  @staticmethod
+  def get_by_external_id(external_id):
+    return Session.all().filter('external_id = ', external_id).get()
+
 
 

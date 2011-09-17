@@ -6,7 +6,8 @@ class IndexHandler(base.handlers.ApiHandler):
 
     self._write_template(
         'index-signed-in.html', {
-            'user': user,
+          'session': self._session,
+          'user': user,
         })
 
   def _get_signed_out(self):
