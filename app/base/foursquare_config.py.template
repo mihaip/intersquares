@@ -17,12 +17,12 @@ __LOCAL_CONFIG = FoursquareConfig(
 __PROD_CONFIG = FoursquareConfig(
     'PROD_CLIENT_ID_GOES_HERE',
     'PROD_CLIENT_SECRET_GOES_HERE',
-    'http://intersquares.appspot.com/4sq/callback')
+    'http://www.intersquares.com/4sq/callback')
 
 def from_hostname(hostname):
   if hostname == 'localhost':
     return __LOCAL_CONFIG
-  elif hostname == 'intersquares.appspot.com':
+  elif hostname == 'www.intersquares.com':
     return __PROD_CONFIG
   else:
     raise Exception('Unexpected hostname %s' % hostname)
