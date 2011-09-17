@@ -31,10 +31,16 @@ def _get_intervals(checkins):
   return intervals
 
 def _compute_intersection(base_checkins, search_checkins):
-  # TODO(mihaip): also filter checkins for venues that only one of the users
-  # has visited.
-  base_checkins = [c for c in base_checkins if c.should_use()]
-  search_checkins = [c for c in search_checkins if c.should_use()]
+  # The only checkins that we need to intersect are those that come from venues
+  # that appear in both sets and that are not private.
+  common_venue_ids = set([c.venue_id for c in base_checkins]).intersection(
+      [c.venue_id for c in search_checkins])
+  checkin_filter = lambda c: c.should_use() and c.venue_id in common_venue_ids
+  base_checkins = filter(checkin_filter, base_checkins)
+  search_checkins = filter(checkin_filter, search_checkins)
+
+  logging.info('Intersecting %d and %d checkins' % (
+      len(base_checkins), len(search_checkins)))
 
   base_intervals = _get_intervals(base_checkins)
   search_intervals = _get_intervals(search_checkins)
@@ -57,6 +63,7 @@ class Checkin(object):
     self.private = 'private' in json_data
     self.timezone = json_data.get('timeZone', None)
     self.venue_id = json_data.get('venue', {}).get('id', None)
+    self.venue_name = json_data.get('venue', {}).get('name', None)
     self.timestamp = datetime.datetime.utcfromtimestamp(json_data['createdAt'])
 
     # TODO(mihaip): shout, comments, photos, overlaps
