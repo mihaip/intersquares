@@ -11,7 +11,7 @@ def generate_id(prefix):
       uuid.uuid4().bytes).replace('=', '')
 
 class PickledProperty(db.Property):
-    data_type = db.Text
+    data_type = db.Blob
     force_type = None
 
     def __init__(
@@ -44,7 +44,7 @@ class PickledProperty(db.Property):
     def get_value_for_datastore(self, model_instance):
         value = self.__get__(model_instance, model_instance.__class__)
         if value is not None:
-            return db.Text(pickle.dumps(value))
+            return db.Blob(pickle.dumps(value))
 
     def make_value_from_datastore(self, value):
         if value is not None:
