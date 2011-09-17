@@ -14,7 +14,7 @@ Hello {{ user.first_name }}. Your external ID is {{ session.external_id }}.
 </p>
 
 {% if user.has_checkins %}
-  We have {{ user.checkins.length }} checkins for you.
+  We have {{ user.checkins.length }} checkins for you (<a href="/checkins/update">update them</a>).
   The oldest is from {{ user.checkins.oldest.timestamp|date:"SHORT_DATETIME_FORMAT" }},
   the newest is from {{ user.checkins.newest.timestamp|date:"SHORT_DATETIME_FORMAT" }}.
 {% else %}

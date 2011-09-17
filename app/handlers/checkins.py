@@ -31,6 +31,7 @@ class IntersectCheckinsHandler(base.handlers.ApiHandler):
         return
 
     intersection = this_user.checkins.intersection(other_user.checkins)
+    intersection.reverse()
 
     self._write_template(
         'intersections.html', {

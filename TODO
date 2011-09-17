@@ -3,11 +3,13 @@ todo:
 - bucket intersections by day
 - include venue data in intersection
 - include checkin data in intersection (comments, photos, shouts)
+- timezones
 
 ideas
 - stream on homepage with people who've recently signed up and want to be matched publicly
 - mobile version (generate QR code so that counterpart can quickly generate matches)
 - tweet link option after signing in
+- stats for who tends to checkin first
 
 later
 - api error handling
