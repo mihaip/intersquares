@@ -30,17 +30,11 @@ class FoursquareCallbackHandler(base.handlers.FoursquareOAuthHandler):
 
     foursquare_id = user_info['response']['user']['id']
 
-    session_id = data.session.Session.generate_session_id()
-
     session = data.session.Session.get_by_foursquare_id(foursquare_id)
     if session:
-      session.session_id = session_id
-      session.oauth_token = oauth_token
+      session.update(oauth_token)
     else:
-      session = data.session.Session(
-          session_id = session_id,
-          foursquare_id = foursquare_id,
-          oauth_token = oauth_token)
+      session = data.session.Session.create(foursquare_id, oauth_token)
     session.put()
 
     self._set_request_session(session)

@@ -5,7 +5,9 @@ import urlparse
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
 
+import base.api
 import data.session
+import data.user
 import foursquare_config
 
 class BaseHandler(webapp.RequestHandler):
@@ -64,3 +66,28 @@ class FoursquareOAuthHandler(SessionHandler):
     hostname = urlparse.urlparse(self.request.url).hostname
     return foursquare_config.from_hostname(hostname)
 
+class ApiHandler(FoursquareOAuthHandler):
+  def get(self):
+    if self._has_request_session():
+      session = self._get_session_from_request()
+
+      if session:
+        self._session = session
+        self._api = base.api.Api(session.oauth_token)
+        self._get_signed_in()
+        return
+      else:
+        self._remove_request_session()
+
+    self._get_signed_out()
+
+  def _get_signed_in(self):
+    raise NotImplementedError()
+
+  def _get_signed_out(self):
+    raise NotImplementedError()
+
+  # convenience methods
+  def _get_user(self):
+    return data.user.User.get_by_foursquare_id(
+        self._session.foursquare_id, self._api)
