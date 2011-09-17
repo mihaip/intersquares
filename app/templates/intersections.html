@@ -23,6 +23,7 @@
   {{ date.date }}
   {% endifchanged %}
   <div class="details">
+    <img src="{{ this_user_checkin.venue_icon }}" width="32" height="32" alt="">
     <a href="https://foursquare.com/venue/{{ this_user_checkin.venue_id }}">{{ this_user_checkin.venue_name }}</a>
     at
     <a href="https://foursquare.com/user/{{this_user.foursquare_id }}/checkin/{{ this_user_checkin.id }}">{{ this_user_checkin.display_time }}</a>
@@ -33,3 +34,4 @@
 
 </body>
 </html>
+

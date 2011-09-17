@@ -2,14 +2,26 @@ import datetime
 
 import pytz
 
+DEFAULT_VENUE_ICON = 'https://foursquare.com/img/categories/question.png'
+
 class Checkin(object):
   def __init__(self, json_data):
     self.id = json_data['id']
     self.type = json_data['type']
     self.private = 'private' in json_data
     self.timezone = json_data.get('timeZone', None)
-    self.venue_id = json_data.get('venue', {}).get('id', None)
-    self.venue_name = json_data.get('venue', {}).get('name', None)
+    if 'venue' in json_data:
+      venue_json_data = json_data['venue']
+      self.venue_id = venue_json_data['id']
+      self.venue_name = venue_json_data.get('name', None)
+      if venue_json_data.get('categories', []):
+        self.venue_icon = venue_json_data['categories'][0]['icon']
+      else:
+        self.venue_icon = DEFAULT_VENUE_ICON
+    else:
+      self.venue_id = None
+      # Other fields shouldn't matter, since should_use() will make us skip
+      # this checkin.
     self.timestamp = datetime.datetime.utcfromtimestamp(
         json_data['createdAt']).replace(tzinfo = pytz.UTC)
 
