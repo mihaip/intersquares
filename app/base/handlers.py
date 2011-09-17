@@ -85,7 +85,7 @@ class ApiHandler(FoursquareOAuthHandler):
     raise NotImplementedError()
 
   def _get_signed_out(self):
-    raise NotImplementedError()
+    self.redirect('/')
 
   # convenience methods
   def _get_user(self):

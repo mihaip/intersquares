@@ -9,9 +9,17 @@
 <a href="/sign-out">Sign out</a>
 </p>
 
-<pre>
-Hello {{ user.first_name }}
-</pre>
+<p>
+Hello {{ user.first_name }}.
+</p>
+
+{% if user.has_checkins %}
+  We have {{ user.checkins.length }} checkins for you.
+  The oldest is from {{ user.checkins.oldest.timestamp|date:"SHORT_DATETIME_FORMAT" }},
+  the newest is from {{ user.checkins.newest.timestamp|date:"SHORT_DATETIME_FORMAT" }}.
+{% else %}
+  We don't have any checkins for you. <a href="/checkins/update">Fetch</a> them to compute intersections.
+{% endif %}
 
 </body>
 </html>

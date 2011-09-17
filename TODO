@@ -1,6 +1,10 @@
 todo:
 - get complete checkin history
-- store checkin history
+
+ideas
+- stream on homepage with people who've recently signed up and want to be matched publicly
+- mobile version (generate QR code so that counterpart can quickly generate matches)
+- tweet link option after signing in
 
 later
 - api error handling
@@ -8,3 +12,4 @@ later
 - make switching between users faster (switch from /authenticate to /authorize?)
 
 done:
+- store checkin history

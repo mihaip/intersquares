@@ -2,7 +2,13 @@ import datetime
 
 from google.appengine.ext import db
 
+import base.util
+import data.checkins
+
 _MAX_USER_DATA_AGE = datetime.timedelta(days=1)
+
+class CheckinsProperty(base.util.PickledProperty):
+    force_type = data.checkins.Checkins
 
 class User(db.Model):
   foursquare_id = db.StringProperty(required=True)
@@ -18,6 +24,17 @@ class User(db.Model):
   twitter_username = db.TextProperty()
   facebook_id = db.TextProperty()
   email_address = db.TextProperty()
+
+  checkins = CheckinsProperty()
+
+  def has_checkins(self):
+    return self.checkins != None and self.checkins.length()
+
+  def get_oldest_checkin_time(self):
+    return self.checkins.oldest().time
+
+  def get_newest_checkin_time(self):
+    return self.checkins.newest().time
 
   def _is_stale(self):
     return datetime.datetime.utcnow() - self.last_update > _MAX_USER_DATA_AGE
