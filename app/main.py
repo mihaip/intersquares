@@ -1,15 +1,19 @@
-#!/usr/bin/env python
+from google.appengine.dist import use_library
+use_library('django', '1.2')
 
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import util
 
-class MainHandler(webapp.RequestHandler):
-  def get(self):
-    self.response.out.write('Hello world!')
+import handlers.main
+import handlers.session
 
 def main():
   application = webapp.WSGIApplication([
-          ('/', MainHandler)
+          ('/', handlers.main.IndexHandler),
+
+          ('/4sq/connect', handlers.session.FoursquareConnectHandler),
+          ('/4sq/callback', handlers.session.FoursquareCallbackHandler),
+
       ],
       debug=True)
   util.run_wsgi_app(application)
