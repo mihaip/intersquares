@@ -84,7 +84,6 @@ class Checkins(object):
         new_count += 1
       self._checkins_by_id[checkin.id] = checkin
 
-    logging.info('new_count: %d' % new_count)
     return new_count
 
   def fetch_newer(self, api):

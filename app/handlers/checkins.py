@@ -40,8 +40,6 @@ class UpdateCheckinsTaskHandler(base.handlers.BaseHandler):
     else:
       has_more = user.checkins.fetch_older(api)
 
-    logging.info('has_more: %s' % str(has_more))
-
     if not has_more:
       user.is_updating = False
 
@@ -70,7 +68,10 @@ class UpdateCheckinsStateHandler(base.handlers.ApiHandler):
 
 class ClearCheckinsHandler(base.handlers.ApiHandler):
   def _get_signed_in(self):
-    pass
+    user = self._get_user()
+    user.checkins = data.checkins.Checkins()
+    user.put()
+    self.redirect('/')
 
 class IntersectCheckinsHandler(base.handlers.ApiHandler):
   def _get_other_user(self):
