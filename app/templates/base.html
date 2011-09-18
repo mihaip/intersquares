@@ -3,6 +3,8 @@
 <head>
 	<title>{% block title %}{{ APP_NAME|escape }}{% endblock %}</title>
 	<link rel="stylesheet" type="text/css" href="/static/main.css">
+	<script src="/static/closure-lite.js"></script>
+	<script src="/static/main.js"></script>
 	{% block head %}{% endblock %}
 	{% if not IS_DEV_SERVER %}
   <script type="text/javascript">

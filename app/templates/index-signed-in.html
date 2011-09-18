@@ -5,39 +5,34 @@
 Hello {{ user.first_name }}. Your external ID is {{ session.external_id }}.
 </p>
 
+<p id="update-status-container"></p>
 
-{% if user.has_checkins %}
-  <p>
-    We have {{ user.checkins.length }} checkins for you (<a href="/checkins/update">update them</a>).
-    The oldest is from {{ user.checkins.oldest.timestamp|date:"SHORT_DATETIME_FORMAT" }},
-    the newest is from {{ user.checkins.newest.timestamp|date:"SHORT_DATETIME_FORMAT" }}.
-  </p>
+<script>
+  updateCheckins(
+      goog.dom.$('update-status-container'), function() {
+        goog.dom.$('post-update-content').style.display = '';
+      });
+</script>
 
+<div style="display: none" id="post-update-content">
   <p>
     Want to see where others intersect with you? Use this button to tweet out a
     link and get matched up:
     <a href="https://twitter.com/?status={{ tweet_text }}" target="_blank"><img src="/static/tweet-button.png" width="55" height="20" border="0" alt="Tweet"></a>
   </p>
-{% else %}
+
+  <form action="/checkins/intersect" method="GET">
+    <label>
+      Compute intersections with:
+      <input type="text" size="20" name="external_id" placeholder="external ID">
+    </label>
+
+    <input type="submit" value="Go">
+  </form>
+
   <p>
-    We don't have any checkins for you.
-    <a href="/checkins/update">Fetch</a> them to compute intersections.
+    <a href="/sign-out">Sign out</a> (to switch users)
   </p>
-{% endif %}
-
-
-<form action="/checkins/intersect" method="GET">
-  <label>
-    Compute intersections with:
-    <input type="text" size="20" name="external_id" placeholder="external ID">
-  </label>
-
-  <input type="submit" value="Go">
-</form>
-
-<p>
-  <a href="/sign-out">Sign out</a> (to switch users)
-</p>
-
+</div>
 
 {% endblock %}
