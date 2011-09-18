@@ -6,6 +6,7 @@ from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
 
 import base.api
+import base.constants
 import data.session
 import data.user
 import foursquare_config
@@ -14,6 +15,7 @@ class BaseHandler(webapp.RequestHandler):
   def _render_template(self, template_file_name, template_values={}):
     template_path = os.path.join(
         os.path.dirname(__file__), '..', 'templates', template_file_name)
+    template_values.update(base.constants.CONSTANTS)
     rendered_template = template.render(template_path, template_values)
     # Django templates are returned as utf-8 encoded by default
     if not isinstance(rendered_template, unicode):

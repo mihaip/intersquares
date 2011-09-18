@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>{% block title %}{{ APP_NAME|escape }}{% endblock %}</title>
+	<link rel="stylesheet" type="text/css" href="/static/main.css">
+	{% block head %}{% endblock %}
+	{% if not IS_DEV_SERVER %}
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-25782740-1']);
+    _gaq.push(['_trackPageview']);
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+  {% endif %}
+</head>
+<body>
+
+<div id="header">
+  <a href="/" id="title"><h1>{{ APP_NAME }}</h1></a>
+  <div id="subtitle">
+    {% block subtitle %}{% endblock %}
+  </div>
+</div>
+
+<div id="container">
+{% block body %}{% endblock %}
+</div>
+
+</body>
+</html>

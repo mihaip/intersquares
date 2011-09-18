@@ -1,9 +1,6 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<title>Intersquares</title>
-</head>
-<body>
+{% extends "base.html" %}
+
+{% block body %}
 
 <p>
   {{ intersection|length }} intersections between {{ this_user.first_name }} ({{this_user.checkins.length }} checkins)
@@ -32,6 +29,4 @@
   </div>
 {% endfor %}
 
-</body>
-</html>
-
+{% endblock %}
