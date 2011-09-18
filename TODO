@@ -4,11 +4,10 @@ todo:
   - link to my external ID from the homepage
 - intersection display
   - include link to send to other people at the bottom
-  - include more venue data in intersection
   - include checkin data in intersection (comments, photos, shouts)
   - include "also there" (either user's friends) in intersection
   - display all that on hover/click over an intersection
-  - map view?
+  - map view
 - intersection matchs
   - option to email match notifications
 - intersections
@@ -50,3 +49,4 @@ done:
 - homepage welcome text
 - write matches (just other party's ID) to table
 - show recent matches on logged in homepage
+- include more venue data in intersection

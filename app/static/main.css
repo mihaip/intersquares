@@ -140,6 +140,32 @@ a {
   border-radius: 5px;
 }
 
+.details td {
+  padding: 0;
+  vertical-align: top;
+  line-height: normal;
+}
+
+.details .icon {
+  padding-right: 5px;
+  text-align: center;
+  width: 32px;
+  vertical-align: middle;
+}
+
+.details .venue {
+  font-weight: bold;
+}
+
+.details .location {
+  font-size: 10pt;
+}
+
+.details .location a {
+  color: #999;
+  text-decoration: none;
+}
+
 #himym-link {
   text-decoration: none;
   color: #000;
