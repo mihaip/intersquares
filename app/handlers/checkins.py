@@ -38,6 +38,13 @@ class IntersectCheckinsHandler(base.handlers.ApiHandler):
     if not other_user:
       return
 
+    # TODO(mihaip): show progress?
+    if not this_user.checkins:
+      this_user.checkins = data.checkins.Checkins()
+    if not this_user.checkins.length():
+      this_user.checkins.update(self._api)
+      this_user.put()
+
     intersection = this_user.checkins.intersection(other_user.checkins)
     intersection.reverse()
 
