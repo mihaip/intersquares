@@ -11,6 +11,11 @@ body {
   background: #eee;
   font-family: Helvetica, Arial, sans-serif;
   font-size: 10pt;
+  line-height: 16pt;
+}
+
+a {
+  color: #6274da;
 }
 
 #header {
@@ -32,4 +37,19 @@ body {
 .button-container {
   text-align: center;
   margin: 2em 0;
+}
+
+#tweet-button {
+  border: 0;
+  vertical-align: text-bottom;
+}
+
+#now-what-list {
+  margin: 0 0 0 2em;
+  padding: 0;
+}
+
+#now-what-list li {
+  margin: .5em 0;
+  padding: 0;
 }

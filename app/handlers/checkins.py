@@ -127,3 +127,13 @@ class ShortIntersectHandler(base.handlers.BaseHandler):
   def get(self, external_id):
     self.redirect(
         '/checkins/intersect?external_id=%s' % urllib.quote(external_id))
+
+class QrCodeIntersectHandler(base.handlers.BaseHandler):
+  def get(self, external_id):
+    qr_code_url = \
+        'https://chart.googleapis.com/chart?chs=320x320&cht=qr&chl=%s' % (
+        urllib.quote(self._generate_absolute_url('i/' + external_id)))
+    self._write_template(
+        'intersections-qr-code.html', {
+            'qr_code_url': qr_code_url,
+        })

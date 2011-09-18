@@ -15,20 +15,29 @@ Hello {{ user.first_name }}. Your external ID is {{ session.external_id }}.
 </script>
 
 <div style="display: none" id="post-update-content">
+  <h2>Now what?</h2>
+
   <p>
-    Want to see where others intersect with you? Use this button to tweet out a
-    link and get matched up:
-    <a href="https://twitter.com/?status={{ tweet_text }}" target="_blank"><img src="/static/tweet-button.png" width="55" height="20" border="0" alt="Tweet"></a>
+    Intersquares is a two-player deal. You need to find another Foursquare user
+    to intersect your checkins with. You can:
   </p>
 
-  <form action="/checkins/intersect" method="GET">
-    <label>
-      Compute intersections with:
-      <input type="text" size="20" name="external_id" placeholder="external ID">
-    </label>
-
-    <input type="submit" value="Go">
-  </form>
+  <ul id="now-what-list">
+    <li>
+      Give out the link <a href="{{ short_url }}">{{ short_url }}</a> to
+      others to have them intersect their checkins with yours.
+    </li>
+    <li>
+      If you use Twitter, you can
+      <a href="https://twitter.com/?status={{ tweet_text }}" target="_blank"><img src="/static/tweet-button.png" width="55" height="20" id="tweet-button" alt="Tweet"></a>
+      out that link and get your followers to join in.
+    </li>
+    <li>
+      If you're on the go, you can get a <a href="{{ qr_code_url }}">QR code</a>
+      so that someone else can intersect their checkins without having to type
+      in that long URL.
+    </li>
+  </ul>
 
   <p>
     <a href="/sign-out">Sign out</a> (to switch users)

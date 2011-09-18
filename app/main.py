@@ -31,6 +31,7 @@ def main():
           # Intersects
           ('/checkins/intersect', handlers.checkins.IntersectCheckinsHandler),
           ('/i/(.+)', handlers.checkins.ShortIntersectHandler),
+          ('/q/(.+)', handlers.checkins.QrCodeIntersectHandler),
       ],
       debug=True)
   util.run_wsgi_app(application)

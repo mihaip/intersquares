@@ -8,10 +8,6 @@ todo:
   - include checkin data in intersection (comments, photos, shouts)
   - include "also there" (either user's friends) in intersection
   - display all that on hover/click over an intersection
-- add "now what" section to logged in page with
-  - url to give out for intersections requests
-  - tweet button
-  - QR code link
 - intersection matchs
   - write matches (just other party's ID) to table
   - show recent matches on logged in homepage
@@ -45,3 +41,7 @@ done:
 - tweet link option after signing in
 - favicon
 - logo
+- add "now what" section to logged in page with
+  - url to give out for intersections requests
+  - tweet button
+  - QR code link
