@@ -3,7 +3,11 @@
 {% block body %}
 
 <p>
-  Curious to see where you would have met <a href="https://foursquare.com/user/{{ other_user.foursquare_id }}"><img src="{{ other_user.photo_url }}" width="16" height="16" alt="">{{ other_user.first_name }}</a>? {{ other_user.pronoun|capfirst }} has Foursquare {{ other_user.checkins.length }} checkins, perhaps you were some of the same venues too.
+  Curious to see where you would have met
+  <a href="https://foursquare.com/user/{{ other_user.foursquare_id }}"><img src="{{ other_user.photo_url }}" width="16" height="16" alt="">{{ other_user.first_name }}</a>?
+  {{ other_user.pronoun|capfirst }} has Foursquare
+  {{ other_user.checkins.length }} checkins, perhaps you were at some of the
+  same venues too.
 </p>
 
 <p>
