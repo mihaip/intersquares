@@ -2,11 +2,19 @@ import calendar
 import datetime
 import logging
 
+import pytz
+
 import base.interval_tree
 import data.checkin
 
 HERE_NOW_DELTA = datetime.timedelta(hours=2)
 TRAVEL_TIME_DELTA = datetime.timedelta(minutes=5)
+
+# Date far into the future (2038) passed in as a beforeTimestamp to trigger
+# consistent paging behavior (otherwise queries without beforeTimestamp
+# return in reverse-chronological order, and those with it return in
+# chronological order).
+END_OF_TIME = datetime.datetime.fromtimestamp((2 << 30) - 1, pytz.UTC)
 
 class CheckinInterval(object):
   def __init__(self, checkin, next_checkin):
@@ -61,14 +69,36 @@ class Checkins(object):
   def __init__(self):
     self._checkins_by_id = {}
 
-  def update(self, api):
-    # TODO(mihaip): pagination, look at oldest/newest timestamp of current
-    # data.
-    checkins_json_data = api.get('users/self/checkins', {'limit': 250})
+  def _fetch(self, api, after_timestamp=None, before_timestamp=None):
+    params = {'limit': 250}
+    if after_timestamp:
+      params['afterTimestamp'] = calendar.timegm(after_timestamp.timetuple())
+    if before_timestamp:
+      params['beforeTimestamp'] = calendar.timegm(before_timestamp.timetuple())
+    checkins_json_data = api.get('users/self/checkins', params)
 
+    new_count = 0
     for checkin_json_data in checkins_json_data['checkins']['items']:
       checkin = data.checkin.Checkin(checkin_json_data)
+      if checkin.id not in self._checkins_by_id:
+        new_count += 1
       self._checkins_by_id[checkin.id] = checkin
+
+    logging.info('new_count: %d' % new_count)
+    return new_count
+
+  def fetch_newer(self, api):
+    after_timestamp = self.length() and self.newest().timestamp or None
+    return self._fetch(api, after_timestamp=after_timestamp) > 0
+
+  def fetch_older(self, api):
+    if self.length():
+      return self._fetch(
+          api,
+          after_timestamp=self.newest().timestamp,
+          before_timestamp=END_OF_TIME) > 0
+    else:
+      return self._fetch(api, before_timestamp=END_OF_TIME) > 0
 
   def length(self):
     return len(self._checkins_by_id)

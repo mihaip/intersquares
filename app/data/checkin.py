@@ -22,8 +22,8 @@ class Checkin(object):
       self.venue_id = None
       # Other fields shouldn't matter, since should_use() will make us skip
       # this checkin.
-    self.timestamp = datetime.datetime.utcfromtimestamp(
-        json_data['createdAt']).replace(tzinfo = pytz.UTC)
+    self.timestamp = datetime.datetime.fromtimestamp(
+        json_data['createdAt'], pytz.UTC)
 
     # TODO(mihaip): shout, comments, photos, overlaps
 

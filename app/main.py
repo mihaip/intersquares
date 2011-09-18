@@ -25,6 +25,7 @@ def main():
 
           # data fetching
           ('/checkins/update', handlers.checkins.UpdateCheckinsHandler),
+          ('/checkins/update/state', handlers.checkins.UpdateCheckinsStateHandler),
           ('/checkins/clear', handlers.checkins.ClearCheckinsHandler),
 
           # Intersects

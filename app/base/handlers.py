@@ -2,6 +2,7 @@ import Cookie
 import os
 import urlparse
 
+from django.utils import simplejson
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
 
@@ -43,6 +44,10 @@ class BaseHandler(webapp.RequestHandler):
   def _write_input_error(self, error_message):
     self._write_error(400)
     self.response.out.write('Input error: %s' % error_message)
+
+  def _write_json(self, obj):
+    self.response.headers['Content-Type'] = 'application/json'
+    self.response.out.write(simplejson.dumps(obj))
 
   def _generate_absolute_url(self, path):
     parsed_request_url = urlparse.urlparse(self.request.url)

@@ -1,4 +1,7 @@
+import logging
 import urllib
+
+from google.appengine.api import taskqueue
 
 import base.handlers
 import data.checkins
@@ -9,10 +12,61 @@ class UpdateCheckinsHandler(base.handlers.ApiHandler):
     user = self._get_user()
     if not user.checkins:
       user.checkins = data.checkins.Checkins()
-    user.checkins.update(self._api)
+    direction = user.checkins.length() and 'forward' or 'backward'
+    user.is_updating = True
     user.put()
 
+    taskqueue.add(
+        queue_name='update-checkins',
+        url='/tasks/checkins/update',
+        params={
+          'oauth_token': self._session.oauth_token,
+          'foursquare_id': user.foursquare_id,
+          'direction': direction
+        })
+
     self.redirect('/')
+
+class UpdateCheckinsTaskHandler(base.handlers.BaseHandler):
+  def post(self):
+    oauth_token = self.request.get('oauth_token')
+    api = base.api.Api(oauth_token)
+    user = data.user.User.get_by_foursquare_id(
+        self.request.get('foursquare_id'), api)
+    direction = self.request.get('direction')
+
+    if direction == 'forward':
+      has_more = user.checkins.fetch_newer(api)
+    else:
+      has_more = user.checkins.fetch_older(api)
+
+    logging.info('has_more: %s' % str(has_more))
+
+    if not has_more:
+      user.is_updating = False
+
+    user.put()
+
+    if has_more:
+      taskqueue.add(
+          queue_name='update-checkins',
+          url='/tasks/checkins/update',
+          params={
+            'oauth_token': oauth_token,
+            'foursquare_id': user.foursquare_id,
+            'direction': direction
+          })
+
+    self.response.out.write('OK')
+
+class UpdateCheckinsStateHandler(base.handlers.ApiHandler):
+  def _get_signed_in(self):
+    user = self._get_user()
+
+    return self._write_json({
+      'is_updating': user.is_updating or False,
+      'checkin_count': user.checkins and user.checkins.length() or 0,
+    })
 
 class ClearCheckinsHandler(base.handlers.ApiHandler):
   def _get_signed_in(self):
@@ -38,12 +92,9 @@ class IntersectCheckinsHandler(base.handlers.ApiHandler):
     if not other_user:
       return
 
-    # TODO(mihaip): show progress?
+    # TODO(mihaip): switch to initiating update and showing progress client-side
     if not this_user.checkins:
       this_user.checkins = data.checkins.Checkins()
-    if not this_user.checkins.length():
-      this_user.checkins.update(self._api)
-      this_user.put()
 
     intersection = this_user.checkins.intersection(other_user.checkins)
     intersection.reverse()

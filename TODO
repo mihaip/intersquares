@@ -3,6 +3,11 @@ todo:
 - include venue data in intersection
 - include checkin data in intersection (comments, photos, shouts)
 - handle self/self intersection
+- favicon
+- logo
+- ereporter
+- handle oauth token revocation
+- show year as a vertical bar along the left side of the intersection list
 
 ideas
 - stream on homepage with people who've recently signed up and want to be matched publicly

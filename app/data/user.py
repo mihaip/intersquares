@@ -14,6 +14,7 @@ class CheckinsProperty(base.util.PickledProperty):
 class User(db.Model):
   foursquare_id = db.StringProperty(required=True)
   last_update = db.DateTimeProperty(auto_now=True)
+  is_updating = db.BooleanProperty()
 
   # User info
   first_name = db.TextProperty()
