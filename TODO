@@ -1,7 +1,5 @@
 todo:
 - ui
-  - favicon
-  - logo
   - fade in content after checkins are updated
 - intersection display
   - show year as a vertical bar along the left side of the intersection list
@@ -44,3 +42,5 @@ done:
 - timezones
 - get complete checkin history
 - tweet link option after signing in
+- favicon
+- logo

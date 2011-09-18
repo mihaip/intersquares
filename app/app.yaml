@@ -7,6 +7,10 @@ handlers:
 - url: /static
   static_dir: static
 
+- url: /favicon.ico
+  static_files: static/favicon.png
+  upload: static/favicon.png
+
 - url: /tasks/.*
   script: tasks.py
   login: admin

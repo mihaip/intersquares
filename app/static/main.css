@@ -8,13 +8,20 @@ html, body {
 }
 
 body {
-  background: #fff;
+  background: #eee;
   font-family: Helvetica, Arial, sans-serif;
   font-size: 10pt;
 }
 
 #header {
   text-align: center;
+  background: #fff url(header.png) no-repeat center top;
+  min-height: 200px;
+  border-bottom: solid 1px #d9d5ce;
+}
+
+#header h1 {
+  display: none;
 }
 
 #container {
