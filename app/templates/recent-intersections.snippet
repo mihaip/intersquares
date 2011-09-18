@@ -1,0 +1,27 @@
+{%if base_intersections %}
+  <h2>People you've computed intersections with</h2>
+
+  <ul>
+    {% for intersection in base_intersections %}
+      <li>
+        {% with intersection.search_foursquare_user as user %}
+          {% include "user.snippet" %} (<a href="/i/{{  intersection.search_external_id }}">{{ intersection.match_count }} matches</a>)
+        {% endwith %}
+      </li>
+    {% endfor %}
+  </ul>
+{% endif %}
+
+{%if search_intersections %}
+  <h2>People who've computed intersections with you</h2>
+
+  <ul>
+    {% for intersection in search_intersections %}
+      <li>
+        {% with intersection.base_foursquare_user as user %}
+          {% include "user.snippet" %} (<a href="/i/{{  intersection.base_external_id }}">{{ intersection.match_count }} matches</a>)
+        {% endwith %}
+      </li>
+    {% endfor %}
+  </ul>
+{% endif %}

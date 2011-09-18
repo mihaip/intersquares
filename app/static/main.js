@@ -46,6 +46,14 @@ function loadIntersections(externalId, successCallback) {
       });
 }
 
+function fetchRecentIntersections(successCallback) {
+ goog.net.XhrIo.send(
+      '/checkins/intersect/recent',
+      function(event) {
+        successCallback(event.target.getResponseText());
+      });
+}
+
 function printEmail(opt_anchorText) {
   var a = [109, 105, 104, 97, 105, 64, 112, 101, 114, 115, 105, 115, 116,
       101, 110, 116, 46, 105, 110, 102, 111];

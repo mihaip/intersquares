@@ -12,6 +12,15 @@ Hello {% include "user.snippet" %} &mdash; you're almost there.
       goog.dom.$('update-status-container'), function() {
         goog.dom.classes.addRemove(
             goog.dom.$('post-update-content'), 'faded-out', 'faded-in');
+        fetchRecentIntersections(function(recentIntersectionHtml) {
+          if (!goog.string.isEmptySafe(recentIntersectionHtml)) {
+            var recentIntersectionsNode =
+                goog.dom.$('recent-intersections-content');
+            recentIntersectionsNode.innerHTML = recentIntersectionHtml;
+            goog.dom.classes.addRemove(
+                recentIntersectionsNode, 'faded-out', 'faded-in');
+          }
+        });
       });
 </script>
 
@@ -39,10 +48,11 @@ Hello {% include "user.snippet" %} &mdash; you're almost there.
       in that long URL.
     </li>
   </ul>
-
-  <p>
-    <a href="/sign-out">Sign out</a> (to switch users)
-  </p>
 </div>
+
+<div class="fader faded-out" id="recent-intersections-content">
+</div>
+
+<a id="sign-out-link" href="/sign-out">Sign out</a>
 
 {% endblock %}

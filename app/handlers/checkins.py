@@ -5,6 +5,7 @@ from google.appengine.api import taskqueue
 
 import base.handlers
 import data.checkins
+import data.intersection
 import data.user
 
 class UpdateCheckinsHandler(base.handlers.ApiHandler):
@@ -123,14 +124,22 @@ class IntersectCheckinsDataHandler(BaseIntersectHandler):
     if not other_user:
       return
 
-    intersection = this_user.checkins.intersection(other_user.checkins)
-    intersection.reverse()
+    intersection_data = this_user.checkins.intersection(other_user.checkins)
+    intersection_data.reverse()
+
+    intersection = data.intersection.Intersection.create_or_update(
+        base_foursquare_id = this_user.foursquare_id,
+        base_external_id = self._session.external_id,
+        search_foursquare_id = other_user.foursquare_id,
+        search_external_id = self.request.get('external_id').strip(),
+        match_count = len(intersection_data))
+    intersection.put()
 
     self._write_template(
         'intersections-data.snippet', {
             'this_user': this_user,
             'other_user': other_user,
-            'intersection': intersection,
+            'intersection': intersection_data,
         })
 
 class ShortIntersectHandler(base.handlers.BaseHandler):
@@ -146,4 +155,36 @@ class QrCodeIntersectHandler(base.handlers.BaseHandler):
     self._write_template(
         'intersections-qr-code.html', {
             'qr_code_url': qr_code_url,
+        })
+
+class RecentIntersectionsHandler(base.handlers.ApiHandler):
+  def _get_signed_in(self):
+    this_user = self._get_user()
+    users_by_foursquare_id = {this_user.foursquare_id: this_user}
+
+    def fetch_user(foursquare_id):
+      if foursquare_id not in users_by_foursquare_id:
+        users_by_foursquare_id[foursquare_id] = \
+            data.user.User.get_by_foursquare_id(foursquare_id, self._api)
+      return users_by_foursquare_id[foursquare_id]
+
+    def fetch_intersections_users(intersections):
+      for intersection in intersections:
+        intersection.base_foursquare_user = \
+            fetch_user(intersection.base_foursquare_id)
+        intersection.search_foursquare_user = \
+            fetch_user(intersection.search_foursquare_id)
+
+    base_intersections = (data.intersection.Intersection.
+        get_by_base_foursquare_id(this_user.foursquare_id))
+    fetch_intersections_users(base_intersections)
+    search_intersections = (data.intersection.Intersection.
+        get_by_search_foursquare_id(this_user.foursquare_id))
+    fetch_intersections_users(search_intersections)
+
+    self._write_template(
+        'recent-intersections.snippet', {
+            'base_intersections': base_intersections,
+            'search_intersections': search_intersections,
+            'users_by_foursquare_id': users_by_foursquare_id
         })
