@@ -18,6 +18,19 @@ a {
   color: #6274da;
 }
 
+.fader {
+  -moz-transition: opacity .3s ease-in-out;
+  -webkit-transition: opacity .3s ease-in-out;
+}
+
+.faded-out {
+  opacity: 0;
+}
+
+.faded-in {
+  opacity: 1;
+}
+
 #header {
   text-align: center;
   background: #fff url(header.png) no-repeat center top;

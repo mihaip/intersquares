@@ -1,6 +1,5 @@
 todo:
 - ui
-  - fade in content after checkins are updated
   - homepage welcome text
 - intersection display
   - show year as a vertical bar along the left side of the intersection list
@@ -45,3 +44,4 @@ done:
   - url to give out for intersections requests
   - tweet button
   - QR code link
+- fade in content after checkins are updated

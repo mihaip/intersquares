@@ -3,10 +3,9 @@
 goog.require('goog.dom');
 goog.require('goog.net.XhrIo');
 
-function updateCheckins(indicatorParentNode, successCallback) {
-  var indicatorNode = goog.dom.$dom('div', {'id': 'checkins-progress'});
+function updateCheckins(indicatorNode, successCallback) {
   indicatorNode.innerText = 'Fetching checkins...';
-  indicatorParentNode.appendChild(indicatorNode);
+  goog.dom.classes.addRemove(indicatorNode, 'faded-out', 'faded-in');
 
   goog.net.XhrIo.send(
       '/checkins/update',

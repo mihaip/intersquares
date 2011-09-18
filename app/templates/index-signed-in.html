@@ -2,19 +2,20 @@
 
 {% block body %}
 <p>
-Hello {{ user.first_name }}. Your external ID is {{ session.external_id }}.
+Hello {{ user.first_name }}.
 </p>
 
-<p id="update-status-container"></p>
+<p class="fader faded-out" id="update-status-container"></p>
 
 <script>
   updateCheckins(
       goog.dom.$('update-status-container'), function() {
-        goog.dom.$('post-update-content').style.display = '';
+        goog.dom.classes.addRemove(
+            goog.dom.$('post-update-content'), 'faded-out', 'faded-in');
       });
 </script>
 
-<div style="display: none" id="post-update-content">
+<div class="fader faded-out" id="post-update-content">
   <h2>Now what?</h2>
 
   <p>
