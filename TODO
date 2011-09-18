@@ -1,6 +1,6 @@
 todo:
-- get complete checkin history
-- include venue data in intersection
+- fade in content after checkins are updated
+- include more venue data in intersection
 - include checkin data in intersection (comments, photos, shouts)
 - handle self/self intersection
 - favicon
@@ -26,3 +26,4 @@ done:
 - basic intersection display
 - bucket intersections by day
 - timezones
+- get complete checkin history
