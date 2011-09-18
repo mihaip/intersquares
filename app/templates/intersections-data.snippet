@@ -11,9 +11,7 @@
 {% for this_user_checkin, other_user_checkin in intersection %}
   {% ifchanged this_user_checkin.display_date %}
     <h2 class="date-header">
-      {% ifchanged this_user_checkin.display_year %}
-        <div class="year">{{ this_user_checkin.display_year }}</div>
-      {% endifchanged %}
+      <div class="year" style="display: {% cycle block,none,none,none,none %}">{{ this_user_checkin.display_year }}</div>
       {{ this_user_checkin.display_short_date }}
     </h2>
   {{ date.date }}
