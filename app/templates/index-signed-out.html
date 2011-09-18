@@ -1,9 +1,26 @@
 {% extends "base.html" %}
 
 {% block body %}
+<p>
+  Curious to see where you would have run into other Foursquare users? Want to
+  reminiscence about all the places you've been together with someone? Are you
+  Ted from <a href="http://en.wikipedia.org/wiki/How_I_Met_Your_Mother"
+  id="himym-link">How I Met Your Mother</a>, and now that you've finally met the
+  mother, you want to know what all your missed opportunities were?
+</p>
+
+<p>
+  Allow {{ APP_NAME }} to connect to your Foursquare account, and you'll find out.
+</p>
 
 <div class="button-container">
-  <a href="/4sq/connect"><img src="/static/foursquare-button.png" width="150" height="24" alt="Connect with Foursquare"></a>
+  <a href="{{ connect_url }}"><img src="/static/foursquare-button.png" width="150" height="24" alt="Connect with Foursquare"></a>
 </div>
+
+<p>
+  Don't worry, we won't update your status or otherwise mess with your checkins.
+</p>
+
+<p id="naming">About the name: Intersections + Foursquare = Intersquares.</p>
 
 {% endblock %}

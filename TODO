@@ -1,6 +1,7 @@
 todo:
 - ui
-  - homepage welcome text
+  - screenshot of sample results linked from homepage
+  - link to my external ID from the homepage
 - intersection display
   - include link to send to other people at the bottom
   - include more venue data in intersection
@@ -48,3 +49,4 @@ done:
 - logo should link to homepage
 - footer with name, link to source
 - show year as a vertical bar along the left side of the intersection list
+- homepage welcome text

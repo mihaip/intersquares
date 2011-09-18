@@ -9,6 +9,7 @@ html, body {
 
 body {
   background: #eee;
+  color: #000;
   font-family: Helvetica, Arial, sans-serif;
   font-size: 12pt;
   line-height: 18pt;
@@ -129,4 +130,14 @@ a {
   color: #555;
   padding: 5px;
   border-radius: 5px;
+}
+
+#himym-link {
+  text-decoration: none;
+  color: #000;
+  font-style: italic;
+}
+
+#naming {
+  opacity: .3;
 }
