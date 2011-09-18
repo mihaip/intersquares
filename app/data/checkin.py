@@ -41,11 +41,11 @@ class Checkin(object):
     return self.get_local_timestamp().strftime('%Y')
 
   def display_date(self):
-    return self.get_local_timestamp().strftime('%B %d, %Y')
+    return self.get_local_timestamp().strftime('%B %-d, %Y')
 
   def display_short_date(self):
-    return self.get_local_timestamp().strftime('%B %d')
+    return self.get_local_timestamp().strftime('%B %-d')
 
   def display_time(self):
-    return self.get_local_timestamp().strftime('%H:%M')
+    return self.get_local_timestamp().strftime('%-H:%M')
 
