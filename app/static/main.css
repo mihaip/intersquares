@@ -115,3 +115,18 @@ a {
   margin: .5em 0;
   padding: 0;
 }
+
+.date-header {
+  position: relative;
+}
+
+.date-header .year {
+  position: absolute;
+  left: -15px;
+  -webkit-transform: rotate(90deg);
+  -webkit-transform-origin: 0 0;
+  background: #ddd;
+  color: #555;
+  padding: 5px;
+  border-radius: 5px;
+}

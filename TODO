@@ -3,7 +3,6 @@ todo:
   - homepage welcome text
 - intersection display
   - include link to send to other people at the bottom
-  - show year as a vertical bar along the left side of the intersection list
   - include more venue data in intersection
   - include checkin data in intersection (comments, photos, shouts)
   - include "also there" (either user's friends) in intersection
@@ -23,12 +22,10 @@ todo:
   - api error handling
   - don't use data > 24 hours old (check ToS)
 
-
 ideas
 - stream on homepage with people who've recently signed up and want to be matched publicly
-- mobile version (generate QR code so that counterpart can quickly generate matches)
+- mobile viewport
 - stats for who tends to checkin first
-- on hover, show "also there" to show friends (of either user) that were at an intersected venue
 
 later
 - centralize urlfetch calls, use the same user agent
@@ -50,3 +47,4 @@ done:
 - fade in content after checkins are updated
 - logo should link to homepage
 - footer with name, link to source
+- show year as a vertical bar along the left side of the intersection list
