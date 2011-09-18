@@ -135,11 +135,16 @@ class IntersectCheckinsDataHandler(BaseIntersectHandler):
         match_count = len(intersection_data))
     intersection.put()
 
+    short_url = self._generate_absolute_url('i/' + self._session.external_id)
+    tweet_text = 'Use Fourquare? See where we would have met: %s' % short_url
+
     self._write_template(
         'intersections-data.snippet', {
             'this_user': this_user,
             'other_user': other_user,
             'intersection': intersection_data,
+            'short_url': short_url,
+            'tweet_text': tweet_text,
         })
 
 class ShortIntersectHandler(base.handlers.BaseHandler):

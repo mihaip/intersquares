@@ -175,3 +175,9 @@ a {
 #naming {
   opacity: .3;
 }
+
+#intersection-footer {
+  margin-top: 2em;
+  border-top: solid 1px #aaa;
+  padding-top: 1em;
+}
