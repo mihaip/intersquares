@@ -9,6 +9,7 @@ ideas
 - mobile version (generate QR code so that counterpart can quickly generate matches)
 - tweet link option after signing in
 - stats for who tends to checkin first
+- on hover, show "also there" to show friends (of either user) that were at an intersected venue
 
 later
 - api error handling

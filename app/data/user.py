@@ -54,6 +54,11 @@ class User(db.Model):
       self.facebook_id = user_info['user']['contact'].get('facebook', None)
       self.email_address = user_info['user']['contact'].get('email', None)
 
+  def pronoun(self):
+    if self.gender == 'male': return 'he'
+    if self.gender == 'female': return 'she'
+    return 'they'
+
   @staticmethod
   def get_by_external_id(external_id):
     session = data.session.Session.get_by_external_id(external_id)

@@ -1,3 +1,5 @@
+import urllib
+
 from google.appengine.api import urlfetch
 from django.utils import simplejson
 
@@ -7,10 +9,18 @@ import data.session
 class FoursquareConnectHandler(base.handlers.FoursquareOAuthHandler):
   def get(self):
     config = self.foursquare_config()
+
+    callback_url = config.callback_url
+    if self.request.get('continue'):
+      callback_url += '?continue=' + urllib.quote(self.request.get('continue'))
+
     self.redirect(
         'https://foursquare.com/oauth2/authenticate?' +
-            'client_id=%s&response_type=code&redirect_uri=%s' %
-        (config.client_id, config.callback_url))
+            base.util.encode_parameters({
+              'client_id': config.client_id,
+              'response_type': 'code',
+              'redirect_uri': callback_url
+            }))
 
 class FoursquareCallbackHandler(base.handlers.FoursquareOAuthHandler):
   def get(self):
@@ -39,7 +49,11 @@ class FoursquareCallbackHandler(base.handlers.FoursquareOAuthHandler):
 
     self._set_request_session(session)
 
-    self.redirect('/')
+    if self.request.get('continue'):
+      # TODO(mihaip): check that the continue URL belongs to us
+      self.redirect(self.request.get('continue'))
+    else:
+      self.redirect('/')
 
 class SignOutHandler(base.handlers.SessionHandler):
   def get(self):

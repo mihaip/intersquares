@@ -21,3 +21,8 @@ body {
   width: 625px;
   margin: 2em auto 0;
 }
+
+.button-container {
+  text-align: center;
+  margin: 2em 0;
+}
