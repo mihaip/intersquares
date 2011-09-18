@@ -3,9 +3,12 @@
 {% block body %}
 
 <p>
-  {{ intersection|length }} intersections between {{ this_user.first_name }} ({{this_user.checkins.length }} checkins)
-  and
-  {{ other_user.first_name }}  ({{other_user.checkins.length }} checkins):
+  You have {{this_user.checkins.length }} checkins.
+  {% with other_user as user %}
+    {% include "user.snippet" %}
+  {% endwith %}
+  has {{other_user.checkins.length }} checkins. It looks like you were at
+  {{ intersection|length }} places together.
 </p>
 
 {% for this_user_checkin, other_user_checkin in intersection %}
