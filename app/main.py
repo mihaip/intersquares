@@ -30,6 +30,7 @@ def main():
 
           # Intersects
           ('/checkins/intersect', handlers.checkins.IntersectCheckinsHandler),
+          ('/checkins/intersect/data', handlers.checkins.IntersectCheckinsDataHandler),
           ('/i/(.+)', handlers.checkins.ShortIntersectHandler),
           ('/q/(.+)', handlers.checkins.QrCodeIntersectHandler),
       ],

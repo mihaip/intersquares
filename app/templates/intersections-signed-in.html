@@ -2,34 +2,34 @@
 
 {% block body %}
 
-<p>
-  You have {{this_user.checkins.length }} checkins.
-  {% with other_user as user %}
-    {% include "user.snippet" %}
-  {% endwith %}
-  has {{other_user.checkins.length }} checkins. It looks like you were at
-  {{ intersection|length }} places together.
-</p>
+<p class="fader faded-out" id="update-status-container"></p>
 
-{% for this_user_checkin, other_user_checkin in intersection %}
-  {% ifchanged this_user_checkin.display_date %}
-    <h2 class="date-header">
-      {% ifchanged this_user_checkin.display_year %}
-        {{ this_user_checkin.display_date }}
-      {% else  %}
-        {{ this_user_checkin.display_short_date }}
-      {% endifchanged %}
-    </h2>
-  {{ date.date }}
-  {% endifchanged %}
-  <div class="details">
-    <img src="{{ this_user_checkin.venue_icon }}" width="32" height="32" alt="">
-    <a href="https://foursquare.com/venue/{{ this_user_checkin.venue_id }}">{{ this_user_checkin.venue_name }}</a>
-    at
-    <a href="https://foursquare.com/user/{{this_user.foursquare_id }}/checkin/{{ this_user_checkin.id }}">{{ this_user_checkin.display_time }}</a>
-    and
-    <a href="https://foursquare.com/user/{{other_user.foursquare_id }}/checkin/{{ other_user_checkin.id }}">{{ other_user_checkin.display_time }}</a>.
-  </div>
-{% endfor %}
+<script>
+  var indicatorNode = goog.dom.$('update-status-container');
+  updateCheckins(
+      indicatorNode,
+      function() {
+        indicatorNode.textContent += ' Computing the intersection...';
+        loadIntersections(
+            '{{ other_user_external_id|escapejs }}',
+            function(intersectionsHtml) {
+              indicatorNode.textContent += ' Done!';
+              goog.dom.classes.addRemove(
+                  indicatorNode, 'faded-in', 'faded-out');
+
+              setTimeout(
+                  function() {
+                    goog.dom.removeNode(indicatorNode);
+                    var intersectionsNode = goog.dom.$('intersections');
+                    intersectionsNode.innerHTML = intersectionsHtml;
+                    goog.dom.classes.addRemove(
+                        intersectionsNode, 'faded-out', 'faded-in');
+                  }, 400);
+            });
+      });
+</script>
+
+<div class="fader faded-out" id="intersections">
+</div>
 
 {% endblock %}

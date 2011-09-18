@@ -37,3 +37,11 @@ function updateProgress(indicatorNode, successCallback) {
         }
       });
 }
+
+function loadIntersections(externalId, successCallback) {
+  goog.net.XhrIo.send(
+      '/checkins/intersect/data?external_id=' + encodeURIComponent(externalId),
+      function(event) {
+        successCallback(event.target.getResponseText());
+      });
+}

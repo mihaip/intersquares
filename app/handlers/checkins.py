@@ -75,7 +75,7 @@ class ClearCheckinsHandler(base.handlers.ApiHandler):
     user.put()
     self.redirect('/')
 
-class IntersectCheckinsHandler(base.handlers.ApiHandler):
+class BaseIntersectHandler(base.handlers.ApiHandler):
   def _get_other_user(self):
     other_user_external_id = self.request.get('external_id').strip()
     if not other_user_external_id:
@@ -89,24 +89,18 @@ class IntersectCheckinsHandler(base.handlers.ApiHandler):
 
     return other_user
 
+class IntersectCheckinsHandler(BaseIntersectHandler):
   def _get_signed_in(self):
     this_user = self._get_user()
     other_user = self._get_other_user()
     if not other_user:
       return
 
-    # TODO(mihaip): switch to initiating update and showing progress client-side
-    if not this_user.checkins:
-      this_user.checkins = data.checkins.Checkins()
-
-    intersection = this_user.checkins.intersection(other_user.checkins)
-    intersection.reverse()
-
     self._write_template(
         'intersections-signed-in.html', {
             'this_user': this_user,
             'other_user': other_user,
-            'intersection': intersection,
+            'other_user_external_id': self.request.get('external_id').strip(),
         })
 
   def _get_signed_out(self):
@@ -122,6 +116,22 @@ class IntersectCheckinsHandler(base.handlers.ApiHandler):
             'connect_url': connect_url,
         })
 
+class IntersectCheckinsDataHandler(BaseIntersectHandler):
+  def _get_signed_in(self):
+    this_user = self._get_user()
+    other_user = self._get_other_user()
+    if not other_user:
+      return
+
+    intersection = this_user.checkins.intersection(other_user.checkins)
+    intersection.reverse()
+
+    self._write_template(
+        'intersections-data.snippet', {
+            'this_user': this_user,
+            'other_user': other_user,
+            'intersection': intersection,
+        })
 
 class ShortIntersectHandler(base.handlers.BaseHandler):
   def get(self, external_id):

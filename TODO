@@ -1,6 +1,7 @@
 todo:
 - ui
   - homepage welcome text
+  - footer with name, link to source
 - intersection display
   - show year as a vertical bar along the left side of the intersection list
   - include more venue data in intersection
@@ -14,6 +15,7 @@ todo:
 - intersections
   - handle self/self intersections
   - handle intersections with friends
+  - handle no intersections
 - good behavior
   - ereporter
   - handle oauth token revocation

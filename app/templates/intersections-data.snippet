@@ -1,0 +1,29 @@
+<p>
+  You have {{this_user.checkins.length }} checkins.
+  {% with other_user as user %}
+    {% include "user.snippet" %}
+  {% endwith %}
+  has {{other_user.checkins.length }} checkins. It looks like you were at
+  {{ intersection|length }} places together.
+</p>
+
+{% for this_user_checkin, other_user_checkin in intersection %}
+  {% ifchanged this_user_checkin.display_date %}
+    <h2 class="date-header">
+      {% ifchanged this_user_checkin.display_year %}
+        {{ this_user_checkin.display_date }}
+      {% else  %}
+        {{ this_user_checkin.display_short_date }}
+      {% endifchanged %}
+    </h2>
+  {{ date.date }}
+  {% endifchanged %}
+  <div class="details">
+    <img src="{{ this_user_checkin.venue_icon }}" width="32" height="32" alt="">
+    <a href="https://foursquare.com/venue/{{ this_user_checkin.venue_id }}">{{ this_user_checkin.venue_name }}</a>
+    at
+    <a href="https://foursquare.com/user/{{this_user.foursquare_id }}/checkin/{{ this_user_checkin.id }}">{{ this_user_checkin.display_time }}</a>
+    and
+    <a href="https://foursquare.com/user/{{other_user.foursquare_id }}/checkin/{{ other_user_checkin.id }}">{{ other_user_checkin.display_time }}</a>.
+  </div>
+{% endfor %}
