@@ -45,3 +45,16 @@ function loadIntersections(externalId, successCallback) {
         successCallback(event.target.getResponseText());
       });
 }
+
+function printEmail(opt_anchorText) {
+  var a = [109, 105, 104, 97, 105, 64, 112, 101, 114, 115, 105, 115, 116,
+      101, 110, 116, 46, 105, 110, 102, 111];
+  var b = [];
+  for (var i = 0; i < a.length; i++) {
+    b.push(String.fromCharCode(a[i]));
+  }
+  b = b.join('');
+  document.write('<' + 'a href="mailto:' + b + '">' +
+                 (opt_anchorText || b) +
+                 '<' + '/a>');
+};

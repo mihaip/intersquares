@@ -29,7 +29,18 @@
 </div>
 
 <div id="container">
-{% block body %}{% endblock %}
+  {% block body %}{% endblock %}
+
+</div>
+
+<div id="about">
+  <div id="about-label">About</div>
+
+  <div id="about-contents">
+    {{ APP_NAME }} was created by <a href="http://persistent.info">Mihai
+    Parparita</a>, who can be reached at <script>printEmail();</script>.
+    <a href="http://code.google.com/p/intersquares/">Source is available</a>.
+  </div>
 </div>
 
 </body>

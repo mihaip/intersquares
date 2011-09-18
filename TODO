@@ -1,13 +1,14 @@
 todo:
 - ui
   - homepage welcome text
-  - footer with name, link to source
 - intersection display
+  - include link to send to other people at the bottom
   - show year as a vertical bar along the left side of the intersection list
   - include more venue data in intersection
   - include checkin data in intersection (comments, photos, shouts)
   - include "also there" (either user's friends) in intersection
   - display all that on hover/click over an intersection
+  - map view?
 - intersection matchs
   - write matches (just other party's ID) to table
   - show recent matches on logged in homepage
@@ -47,3 +48,5 @@ done:
   - tweet button
   - QR code link
 - fade in content after checkins are updated
+- logo should link to homepage
+- footer with name, link to source
