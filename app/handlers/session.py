@@ -30,12 +30,12 @@ class FoursquareCallbackHandler(base.handlers.FoursquareOAuthHandler):
         'client_id=%s&client_secret=%s&grant_type=authorization_code&' +
         'redirect_uri=%s&code=%s') % (
         config.client_id, config.client_secret, config.callback_url, code)
-    auth_json = urlfetch.fetch(url)
+    auth_json = urlfetch.fetch(url, deadline=10)
     oauth_token = simplejson.loads(auth_json.content)['access_token']
 
     user_info_url = ('https://api.foursquare.com/v2/users/self?' +
         'oauth_token=%s' % oauth_token)
-    user_info_json = urlfetch.fetch(user_info_url)
+    user_info_json = urlfetch.fetch(user_info_url, deadline=10)
     user_info = simplejson.loads(user_info_json.content)
 
     foursquare_id = user_info['response']['user']['id']
