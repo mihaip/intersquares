@@ -4,9 +4,9 @@
 
 <p>
   Curious to see where you would have met
-  <a href="https://foursquare.com/user/{{ other_user.foursquare_id }}"><img src="{{ other_user.photo_url }}" width="16" height="16" alt="">{{ other_user.first_name }}</a>?
+  {% with other_user as user %}{% include "user.snippet" %}{% endwith %}?
   {{ other_user.pronoun|capfirst }} has {{ other_user.checkins.length }}
-  Foursquare checkins, perhaps you were at some of the same venues too.
+  Foursquare checkins, perhaps you were at some of the same places too.
 </p>
 
 <p>

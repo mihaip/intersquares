@@ -4,7 +4,7 @@ goog.require('goog.dom');
 goog.require('goog.net.XhrIo');
 
 function updateCheckins(indicatorNode, successCallback) {
-  indicatorNode.innerText = 'Fetching checkins...';
+  indicatorNode.innerText = 'Loading your checkins...';
   goog.dom.classes.addRemove(indicatorNode, 'faded-out', 'faded-in');
 
   goog.net.XhrIo.send(
@@ -23,12 +23,16 @@ function updateProgress(indicatorNode, successCallback) {
         var json = event.target.getResponseJson();
 
         if (json.is_updating) {
-          indicatorNode.innerText = 'Got ' + json.checkin_count + ' checkins...';
+          indicatorNode.innerText =
+              'Loading your checkins (got ' + json.checkin_count +
+              ' so far)...';
           setTimeout(
               goog.partial(updateProgress, indicatorNode, successCallback),
               1000);
         } else {
-          indicatorNode.innerText = 'Got ' + json.checkin_count + ' checkins.';
+          indicatorNode.innerText =
+              'OK, your ' + json.checkin_count +
+              ' checkins are now all loaded.';
           successCallback();
         }
       });

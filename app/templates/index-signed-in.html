@@ -2,7 +2,7 @@
 
 {% block body %}
 <p>
-Hello {{ user.first_name }}.
+Hello {% include "user.snippet" %} &mdash; you're almost there.
 </p>
 
 <p class="fader faded-out" id="update-status-container"></p>

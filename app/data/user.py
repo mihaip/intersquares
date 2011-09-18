@@ -56,6 +56,15 @@ class User(db.Model):
       self.facebook_id = user_info['user']['contact'].get('facebook', None)
       self.email_address = user_info['user']['contact'].get('email', None)
 
+  def display_name(self):
+    if not self.first_name and not self.last_name:
+      return 'Anonymous'
+
+    if not self.last_name:
+      return self.first_name
+
+    return '%s %s.' % (self.first_name, self.last_name[0])
+
   def pronoun(self):
     if self.gender == 'male': return 'he'
     if self.gender == 'female': return 'she'

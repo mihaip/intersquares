@@ -10,12 +10,30 @@ html, body {
 body {
   background: #eee;
   font-family: Helvetica, Arial, sans-serif;
-  font-size: 10pt;
-  line-height: 16pt;
+  font-size: 12pt;
+  line-height: 18pt;
 }
 
 a {
   color: #6274da;
+}
+
+.user-link {
+  font-weight: bold;
+  text-decoration: none;
+  padding: 8px 5px 4px 5px;
+  background: #d6d6d6;
+  border-radius: 5px;
+}
+
+.user-link:hover {
+  background: #ccc;
+}
+
+.user-link img {
+  border: 0;
+  vertical-align: text-bottom;
+  padding-right: 1px;
 }
 
 .fader {
