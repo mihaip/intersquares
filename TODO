@@ -10,8 +10,6 @@ todo:
   - display all that on hover/click over an intersection
   - map view?
 - intersection matchs
-  - write matches (just other party's ID) to table
-  - show recent matches on logged in homepage
   - option to email match notifications
 - intersections
   - handle self/self intersections
@@ -50,3 +48,5 @@ done:
 - footer with name, link to source
 - show year as a vertical bar along the left side of the intersection list
 - homepage welcome text
+- write matches (just other party's ID) to table
+- show recent matches on logged in homepage
