@@ -1,6 +1,5 @@
 todo:
 - ui
-  - screenshot of sample results linked from homepage
   - link to my external ID from the homepage
 - intersection display
   - include checkin data in intersection (comments, photos, shouts)
@@ -50,3 +49,4 @@ done:
 - show recent matches on logged in homepage
 - include more venue data in intersection
 - include link to send to other people at the bottom
+- screenshot of sample results linked from homepage
