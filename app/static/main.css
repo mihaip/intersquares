@@ -181,3 +181,7 @@ a {
   border-top: solid 1px #aaa;
   padding-top: 1em;
 }
+
+.intersection-list li {
+  padding: 1em 0;
+}
