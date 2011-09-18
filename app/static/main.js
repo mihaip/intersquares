@@ -4,7 +4,6 @@ goog.require('goog.dom');
 goog.require('goog.net.XhrIo');
 
 function updateCheckins(indicatorParentNode, successCallback) {
-  return;
   var indicatorNode = goog.dom.$dom('div', {'id': 'checkins-progress'});
   indicatorNode.innerText = 'Fetching checkins...';
   indicatorParentNode.appendChild(indicatorNode);

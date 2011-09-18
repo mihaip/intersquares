@@ -7,6 +7,7 @@ import data.checkins
 import data.session
 
 _MAX_USER_DATA_AGE = datetime.timedelta(days=1)
+_MAX_CHECKIN_DATA_AGE = datetime.timedelta(hours=1)
 
 class CheckinsProperty(base.util.PickledProperty):
   force_type = data.checkins.Checkins
@@ -59,6 +60,10 @@ class User(db.Model):
     if self.gender == 'male': return 'he'
     if self.gender == 'female': return 'she'
     return 'they'
+
+  def needs_checkin_update(self):
+    return (not self.checkins) or \
+        (datetime.datetime.utcnow() - self.last_update > _MAX_CHECKIN_DATA_AGE)
 
   @staticmethod
   def get_by_external_id(external_id):

@@ -10,22 +10,24 @@ import data.user
 class UpdateCheckinsHandler(base.handlers.ApiHandler):
   def _get_signed_in(self):
     user = self._get_user()
-    if not user.checkins:
-      user.checkins = data.checkins.Checkins()
-    direction = user.checkins.length() and 'forward' or 'backward'
-    user.is_updating = True
-    user.put()
 
-    taskqueue.add(
-        queue_name='update-checkins',
-        url='/tasks/checkins/update',
-        params={
-          'oauth_token': self._session.oauth_token,
-          'foursquare_id': user.foursquare_id,
-          'direction': direction
-        })
+    if user.needs_checkin_update():
+      if not user.checkins:
+        user.checkins = data.checkins.Checkins()
+      direction = user.checkins.length() and 'forward' or 'backward'
+      user.is_updating = True
+      user.put()
 
-    self.redirect('/')
+      taskqueue.add(
+          queue_name='update-checkins',
+          url='/tasks/checkins/update',
+          params={
+            'oauth_token': self._session.oauth_token,
+            'foursquare_id': user.foursquare_id,
+            'direction': direction
+          })
+
+    self.response.out.write('OK')
 
 class UpdateCheckinsTaskHandler(base.handlers.BaseHandler):
   def post(self):

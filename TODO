@@ -1,6 +1,7 @@
 todo:
 - ui
   - fade in content after checkins are updated
+  - homepage welcome text
 - intersection display
   - show year as a vertical bar along the left side of the intersection list
   - include more venue data in intersection

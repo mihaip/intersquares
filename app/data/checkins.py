@@ -7,8 +7,8 @@ import pytz
 import base.interval_tree
 import data.checkin
 
-HERE_NOW_DELTA = datetime.timedelta(hours=2)
-TRAVEL_TIME_DELTA = datetime.timedelta(minutes=5)
+_HERE_NOW_DELTA = datetime.timedelta(hours=2)
+_TRAVEL_TIME_DELTA = datetime.timedelta(minutes=5)
 
 # Date far into the future (2038) passed in as a beforeTimestamp to trigger
 # consistent paging behavior (otherwise queries without beforeTimestamp
@@ -20,10 +20,10 @@ class CheckinInterval(object):
   def __init__(self, checkin, next_checkin):
       # TODO(mihaip): so many datetime conversions is probably a bad idea
       self.start = calendar.timegm(checkin.timestamp.timetuple())
-      end_timestamp = checkin.timestamp + HERE_NOW_DELTA
+      end_timestamp = checkin.timestamp + _HERE_NOW_DELTA
       if next_checkin and end_timestamp > next_checkin.timestamp:
         # TODO(mihaip): travel time should be a function of distance
-        end_timestamp = next_checkin.timestamp - TRAVEL_TIME_DELTA
+        end_timestamp = next_checkin.timestamp - _TRAVEL_TIME_DELTA
       self.stop = calendar.timegm(end_timestamp.timetuple())
       self.checkin = checkin
 
