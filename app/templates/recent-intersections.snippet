@@ -1,7 +1,7 @@
 {%if base_intersections %}
   <h2>People you've computed intersections with</h2>
 
-  <ul>
+  <ul class="intersection-list">
     {% for intersection in base_intersections %}
       <li>
         {% with intersection.search_foursquare_user as user %}
@@ -15,7 +15,7 @@
 {%if search_intersections %}
   <h2>People who've computed intersections with you</h2>
 
-  <ul>
+  <ul class="intersection-list">
     {% for intersection in search_intersections %}
       <li>
         {% with intersection.base_foursquare_user as user %}
