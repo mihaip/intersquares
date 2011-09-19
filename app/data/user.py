@@ -16,6 +16,7 @@ class User(db.Model):
   foursquare_id = db.StringProperty(required=True)
   last_update = db.DateTimeProperty(auto_now=True,indexed=False)
   is_updating = db.BooleanProperty(indexed=False)
+  doesnt_want_mail = db.BooleanProperty(indexed=False)
 
   # User info
   first_name = db.TextProperty(indexed=False)

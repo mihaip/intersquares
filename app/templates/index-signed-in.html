@@ -50,6 +50,13 @@ Hello {% include "user.snippet" %} &mdash; you're almost there.
   </ul>
 
   {% include "mihai-intersect.snippet" %}
+
+  {% if user.email_address %}
+  <label>
+    <input type="checkbox" {% if not user.doesnt_want_mail %}checked{% endif %} onclick="toggleEmail()">
+    Email me at <code>{{ user.email_address }}</code> when someone computes an intersection with my checkins.
+  </label>
+  {% endif %}
 </div>
 
 <div class="fader faded-out" id="recent-intersections-content">

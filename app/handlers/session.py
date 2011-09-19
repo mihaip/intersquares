@@ -44,8 +44,8 @@ class FoursquareCallbackHandler(base.handlers.FoursquareOAuthHandler):
 
       self._write_error(500)
       self.response.out.write(
-          'Got a %d status code from Foursquare. It might go away if you ' +
-          'refresh this page\n' % auth_json.status_code)
+          ('Got a %d status code from Foursquare. It might go away if you ' +
+          'refresh this page\n') % auth_json.status_code)
       return
     except KeyError, err:
       logging.exception(err)
@@ -90,3 +90,10 @@ class SignOutHandler(base.handlers.SessionHandler):
   def get(self):
     self._remove_request_session()
     self.redirect('/')
+
+class ToggleEmailHandler(base.handlers.ApiHandler):
+  def _post_signed_in(self):
+    user = self._get_user()
+    user.doesnt_want_mail = not user.doesnt_want_mail
+    user.put()
+    self.response.out.write('OK')

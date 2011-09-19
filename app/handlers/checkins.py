@@ -1,6 +1,7 @@
 import logging
 import urllib
 
+from google.appengine.api import mail
 from google.appengine.api import taskqueue
 
 import base.handlers
@@ -153,6 +154,15 @@ class IntersectCheckinsDataHandler(BaseIntersectHandler):
         search_foursquare_id = other_user.foursquare_id,
         search_external_id = self.request.get('external_id').strip(),
         match_count = len(intersection_data))
+
+    if not other_user.doesnt_want_mail and other_user.email_address and \
+        not intersection.emailed:
+      logging.info('Sending mail')
+      self._send_intersection_mail(
+          this_user, short_url, other_user, intersection_data)
+      intersection.emailed = True
+    else:
+      logging.info('Not sending mail')
     intersection.put()
 
     self._write_template(
@@ -163,6 +173,36 @@ class IntersectCheckinsDataHandler(BaseIntersectHandler):
             'short_url': short_url,
             'tweet_text': tweet_text,
         })
+
+  def _send_intersection_mail(
+      self, this_user, this_user_short_url, other_user, intersection_data):
+    message_data = {
+      'other_user_display_name': other_user.display_name(),
+      'this_user_display_name': this_user.display_name(),
+      'match_count': len(intersection_data),
+      'this_user_short_url': this_user_short_url,
+      'homepage_url': self._generate_absolute_url(''),
+    }
+    mail.send_mail(sender='Intersquares <app@intersquares.com>',
+                  to='%s <%s>' % (
+                      other_user.display_name(), other_user.email_address),
+                  subject='Intersquares match with %s' %
+                      this_user.display_name(),
+                  body='''Hi %(other_user_display_name)s:
+
+%(this_user_display_name)s just used Intersquares to see where you would have
+met, and it looks like you have %(match_count)d checkins in common. To see
+them for yourself, visit:
+
+%(this_user_short_url)s
+
+To see other intersections, or to turn off these emails, visit:
+
+%(homepage_url)s
+
+Thanks,
+Intersquares Team (i.e. Mihai P.)
+''' % message_data)
 
 class ShortIntersectHandler(base.handlers.BaseHandler):
   def get(self, external_id):

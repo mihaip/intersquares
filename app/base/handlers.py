@@ -93,23 +93,37 @@ class FoursquareOAuthHandler(SessionHandler):
 
 class ApiHandler(FoursquareOAuthHandler):
   def get(self):
+    self._dispatch_request(
+        lambda: self._get_signed_in(), lambda: self._get_signed_out())
+
+  def post(self):
+    self._dispatch_request(
+        lambda: self._post_signed_in(), lambda: self._post_signed_out())
+
+  def _dispatch_request(self, signed_in, signed_out):
     if self._has_request_session():
       session = self._get_session_from_request()
 
       if session:
         self._session = session
         self._api = base.api.Api(session.oauth_token)
-        self._get_signed_in()
+        signed_in()
         return
       else:
         self._remove_request_session()
 
-    self._get_signed_out()
+    signed_out()
 
   def _get_signed_in(self):
     raise NotImplementedError()
 
   def _get_signed_out(self):
+    self.redirect('/')
+
+  def _post_signed_in(self):
+    raise NotImplementedError()
+
+  def _post_signed_out(self):
     self.redirect('/')
 
   # convenience methods

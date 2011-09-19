@@ -18,10 +18,11 @@ def main():
           # main
           ('/', handlers.main.IndexHandler),
 
-          # session
+          # session and users
           ('/4sq/connect', handlers.session.FoursquareConnectHandler),
           ('/4sq/callback', handlers.session.FoursquareCallbackHandler),
           ('/sign-out', handlers.session.SignOutHandler),
+          ('/toggle-email', handlers.session.ToggleEmailHandler),
 
           # data fetching
           ('/checkins/update', handlers.checkins.UpdateCheckinsHandler),
