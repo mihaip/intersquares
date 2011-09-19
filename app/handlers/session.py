@@ -16,7 +16,7 @@ class FoursquareConnectHandler(base.handlers.FoursquareOAuthHandler):
       callback_url += '?continue=' + urllib.quote(self.request.get('continue'))
 
     self.redirect(
-        'https://foursquare.com/oauth2/authenticate?' +
+        'https://foursquare.com/oauth2/authorize?' +
             base.util.encode_parameters({
               'client_id': config.client_id,
               'response_type': 'code',
@@ -88,7 +88,5 @@ class FoursquareCallbackHandler(base.handlers.FoursquareOAuthHandler):
 
 class SignOutHandler(base.handlers.SessionHandler):
   def get(self):
-    # TODO(mihaip): should we remove the Foursquare session too? Otherwise
-    # since we use /authenticate, it's hard to switch users on the fly.
     self._remove_request_session()
     self.redirect('/')

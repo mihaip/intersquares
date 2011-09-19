@@ -22,7 +22,6 @@ ideas
 
 later
 - centralize urlfetch calls, use the same user agent
-- make switching between users faster (switch from /authenticate to /authorize?)
 
 done:
 - store checkin history
@@ -49,3 +48,4 @@ done:
 - screenshot of sample results linked from homepage
 - link to my external ID from the homepage
 - handle self/self intersections
+- make switching between users faster (switch from /authenticate to /authorize?)
