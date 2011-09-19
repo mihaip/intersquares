@@ -6,7 +6,6 @@ todo:
   - map view
 - intersections
   - handle intersections with friends
-  - handle no intersections
 - good behavior
   - expose checkin clear handler
   - ereporter
@@ -49,3 +48,4 @@ done:
 - make switching between users faster (switch from /authenticate to /authorize?)
 - mobile viewport
 - option to email match notifications
+- handle no intersections

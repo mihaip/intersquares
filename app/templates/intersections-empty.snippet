@@ -1,0 +1,25 @@
+<p>
+  You have {{this_user.checkins.length }} checkins.
+  {% with other_user as user %}
+    {% include "user.snippet" %}
+  {% endwith %}
+  has {{other_user.checkins.length }} checkins. Unfortunately it looks
+  like you were never at the same place together. Who knows, maybe you'll
+  run into each other at some point though!
+</p>
+
+<div id="intersection-footer">
+  <p>
+    If you'd like to have others intersect with your Foursquare
+    checkins, just give them this link (you can also
+    <a href="https://twitter.com/?status={{ tweet_text }}" target="_blank">tweet
+    it</a>):
+  </p>
+
+  <p><a href="{{ short_url }}">{{ short_url }}</a></p>
+
+  <p>
+    The <a href="/">homepage</a> will show people who've recently intersected
+    their checkins with yours.
+  </p>
+</div>

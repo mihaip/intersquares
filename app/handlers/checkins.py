@@ -168,8 +168,8 @@ class IntersectCheckinsDataHandler(BaseIntersectHandler):
         search_external_id = self.request.get('external_id').strip(),
         match_count = len(intersection_data))
 
-    if not other_user.doesnt_want_mail and other_user.email_address and \
-        not intersection.emailed:
+    if intersection_data and not other_user.doesnt_want_mail and \
+        other_user.email_address and not intersection.emailed:
       logging.info('Sending mail')
       self._send_intersection_mail(
           this_user, short_url, other_user, intersection_data)
@@ -177,6 +177,16 @@ class IntersectCheckinsDataHandler(BaseIntersectHandler):
     else:
       logging.info('Not sending mail')
     intersection.put()
+
+    if not intersection_data:
+      self._write_template(
+          'intersections-empty.snippet', {
+            'this_user': this_user,
+            'other_user': other_user,
+            'short_url': short_url,
+            'tweet_text': tweet_text,
+          })
+      return
 
     self._write_template(
         'intersections-data.snippet', {
