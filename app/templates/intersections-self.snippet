@@ -1,0 +1,16 @@
+<p>
+  Not much point in doing an intersection with yourself, now is there?
+  If you're looking to get others to intesect their checkins with yours (all
+  {{this_user.checkins.length }} of them), just give them this link (you can also
+    <a href="https://twitter.com/?status={{ tweet_text }}" target="_blank">tweet
+    it</a>):
+</p>
+
+<p><a href="{{ short_url }}">{{ short_url }}</a></p>
+
+<p>
+  The <a href="/">homepage</a> will show people who've recently intersected
+  their checkins with yours.
+</p>
+
+{% include "mihai-intersect.snippet" %}

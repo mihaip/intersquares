@@ -7,7 +7,6 @@
   {{ intersection|length }} places together.
 </p>
 
-<table>
 {% for this_user_checkin, other_user_checkin in intersection %}
   {% ifchanged this_user_checkin.display_date %}
     <h2 class="date-header">

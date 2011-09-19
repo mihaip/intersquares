@@ -124,6 +124,26 @@ class IntersectCheckinsDataHandler(BaseIntersectHandler):
     if not other_user:
       return
 
+    short_url = self._generate_absolute_url('i/' + self._session.external_id)
+    tweet_text = 'Use Fourquare? See where we would have met: %s' % short_url
+
+    if other_user.foursquare_id == this_user.foursquare_id:
+      mihai_user = data.user.User.get_by_foursquare_id('2118', None)
+      if mihai_user:
+        mihai_session = data.session.Session.get_by_foursquare_id('2118')
+        mihai_short_url = self._generate_absolute_url('i/' + mihai_session.external_id)
+      else:
+        mihai_short_url = None
+      self._write_template(
+          'intersections-self.snippet', {
+              'this_user': this_user,
+              'short_url': short_url,
+              'tweet_text': tweet_text,
+              'mihai_user': mihai_user,
+              'mihai_short_url': mihai_short_url,
+          })
+      return
+
     intersection_data = this_user.checkins.intersection(other_user.checkins)
     intersection_data.reverse()
 
@@ -134,9 +154,6 @@ class IntersectCheckinsDataHandler(BaseIntersectHandler):
         search_external_id = self.request.get('external_id').strip(),
         match_count = len(intersection_data))
     intersection.put()
-
-    short_url = self._generate_absolute_url('i/' + self._session.external_id)
-    tweet_text = 'Use Fourquare? See where we would have met: %s' % short_url
 
     self._write_template(
         'intersections-data.snippet', {
