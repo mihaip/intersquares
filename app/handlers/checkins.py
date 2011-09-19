@@ -41,6 +41,9 @@ class UpdateCheckinsTaskHandler(base.handlers.BaseHandler):
         self.request.get('foursquare_id'), api)
     direction = self.request.get('direction')
 
+    logging.info('Updating checkins for %s (direction: %s)',
+        user.foursquare_id, direction)
+
     if direction == 'forward':
       has_more = user.checkins.fetch_newer(api)
     else:
@@ -77,6 +80,8 @@ class UpdateCheckinsTaskHandler(base.handlers.BaseHandler):
 class UpdateCheckinsStateHandler(base.handlers.ApiHandler):
   def _get_signed_in(self):
     user = self._get_user()
+
+    logging.info('Getting update state for %s', user.foursquare_id)
 
     return self._write_json({
       'is_updating': user.is_updating or False,
