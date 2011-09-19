@@ -1,3 +1,4 @@
+import logging
 import urllib
 
 from google.appengine.api import urlfetch
@@ -31,7 +32,37 @@ class FoursquareCallbackHandler(base.handlers.FoursquareOAuthHandler):
         'redirect_uri=%s&code=%s') % (
         config.client_id, config.client_secret, config.callback_url, code)
     auth_json = urlfetch.fetch(url, deadline=10)
-    oauth_token = simplejson.loads(auth_json.content)['access_token']
+    try:
+      oauth_token = simplejson.loads(auth_json.content)['access_token']
+    except simplejson.JSONDecodeError, err:
+      logging.exception(err)
+      logging.error('JSON error: %s', str(err))
+      logging.error('Request URL: %s',  url)
+      logging.error('Foursquare response content: %s', auth_json.content)
+      logging.error('Response status code: %d', auth_json.status_code)
+      logging.error('Response headers: %s', str(auth_json.headers))
+
+      self._write_error(500)
+      self.response.out.write(
+          'Got a %d status code from Foursquare. It might go away if you ' +
+          'refresh this page\n' % auth_json.status_code)
+      return
+    except KeyError, err:
+      logging.exception(err)
+      logging.error('KeyError: %s', str(err))
+      logging.error('Request URL: %s',  url)
+      logging.error('Foursquare response content: %s', auth_json.content)
+      logging.error('Response status code: %d', auth_json.status_code)
+      logging.error('Response headers: %s', str(auth_json.headers))
+      logging.error(
+          'Response JSON: %s', str(simplejson.loads(auth_json.content)))
+
+      self._write_error(500)
+      self.response.out.write(
+          'Oops, couldn\'t get what we need from Foursquare\'s JSON response. ' +
+          'Things might be better if you refresh this page\n')
+      return
+
 
     user_info_url = ('https://api.foursquare.com/v2/users/self?' +
         'oauth_token=%s' % oauth_token)
