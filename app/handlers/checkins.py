@@ -144,7 +144,7 @@ class IntersectCheckinsDataHandler(BaseIntersectHandler):
       return
 
     short_url = self._generate_absolute_url('i/' + self._session.external_id)
-    tweet_text = 'Use Fourquare? See where we would have met: %s' % short_url
+    tweet_text = 'Use Foursquare? See where we would have met: %s' % short_url
 
     if other_user.foursquare_id == this_user.foursquare_id:
       mihai_user = data.user.User.get_by_foursquare_id('2118', None)
