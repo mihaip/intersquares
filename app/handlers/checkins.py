@@ -182,31 +182,12 @@ class QrCodeIntersectHandler(base.handlers.BaseHandler):
 class RecentIntersectionsHandler(base.handlers.ApiHandler):
   def _get_signed_in(self):
     this_user = self._get_user()
-    users_by_foursquare_id = {this_user.foursquare_id: this_user}
 
-    def fetch_user(foursquare_id):
-      if foursquare_id not in users_by_foursquare_id:
-        users_by_foursquare_id[foursquare_id] = \
-            data.user.User.get_by_foursquare_id(foursquare_id, self._api)
-      return users_by_foursquare_id[foursquare_id]
-
-    def fetch_intersections_users(intersections):
-      for intersection in intersections:
-        intersection.base_foursquare_user = \
-            fetch_user(intersection.base_foursquare_id)
-        intersection.search_foursquare_user = \
-            fetch_user(intersection.search_foursquare_id)
-
-    base_intersections = (data.intersection.Intersection.
-        get_by_base_foursquare_id(this_user.foursquare_id))
-    fetch_intersections_users(base_intersections)
-    search_intersections = (data.intersection.Intersection.
-        get_by_search_foursquare_id(this_user.foursquare_id))
-    fetch_intersections_users(search_intersections)
+    base_intersections, search_intersections = \
+        data.intersection.Intersection.get_for_user(this_user)
 
     self._write_template(
         'recent-intersections.snippet', {
             'base_intersections': base_intersections,
-            'search_intersections': search_intersections,
-            'users_by_foursquare_id': users_by_foursquare_id
+            'search_intersections': search_intersections
         })
