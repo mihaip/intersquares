@@ -120,7 +120,7 @@ class Checkins(object):
     sorted_checkins = sorted(
         self._checkins_by_id.values(), key=lambda checkin: checkin.timestamp)
     self._checkins_by_id = {}
-    for checkin in sorted_checkins[250:]:
+    for checkin in sorted_checkins[350:]:
       self._checkins_by_id[checkin.id] = checkin
 
   def intersection(self, other_checkins):
