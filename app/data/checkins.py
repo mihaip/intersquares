@@ -7,7 +7,7 @@ import pytz
 import base.interval_tree
 import data.checkin
 
-_HERE_NOW_DELTA = datetime.timedelta(hours=2)
+_HERE_NOW_DELTA = datetime.timedelta(hours=3)
 _TRAVEL_TIME_DELTA = datetime.timedelta(minutes=5)
 
 # Date far into the future (2038) passed in as a beforeTimestamp to trigger

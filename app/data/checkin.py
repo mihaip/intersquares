@@ -1,6 +1,7 @@
 import datetime
 import logging
 
+from django.utils import simplejson
 import pytz
 
 import base.util
@@ -80,3 +81,13 @@ class Checkin(object):
     return 'http://maps.google.com/maps?%s' % base.util.encode_parameters({
           'q': '%g,%g (%s)' % (self.venue_lat, self.venue_lng, self.venue_name)
         })
+
+  def __str__(self):
+    return simplejson.dumps({
+      'id': self.id,
+      'type': self.type,
+      'private': self.private,
+      'venue_id': self.venue_id,
+      'timestamp': str(self.timestamp),
+    }, indent=2)
+
