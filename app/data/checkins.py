@@ -116,6 +116,13 @@ class Checkins(object):
         newest = checkin
     return newest
 
+  def drop_old_checkins(self):
+    sorted_checkins = sorted(
+        self._checkins_by_id.values(), key=lambda checkin: checkin.timestamp)
+    self._checkins_by_id = {}
+    for checkin in sorted_checkins[250:]:
+      self._checkins_by_id[checkin.id] = checkin
+
   def intersection(self, other_checkins):
     return _compute_intersection(
         self._checkins_by_id.values(),

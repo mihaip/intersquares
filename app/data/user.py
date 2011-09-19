@@ -6,6 +6,9 @@ import base.util
 import data.checkins
 import data.session
 
+# If we're mid-update and the user hasn't been modified, the update process
+# is probably stuck, so try to restart it.
+_MAX_IN_UPDATE_DATA_AGE = datetime.timedelta(minutes=1)
 _MAX_USER_DATA_AGE = datetime.timedelta(days=1)
 _MAX_CHECKIN_DATA_AGE = datetime.timedelta(hours=1)
 
@@ -72,8 +75,17 @@ class User(db.Model):
     return 'they'
 
   def needs_checkin_update(self):
-    return (not self.checkins) or (not self.checkins.length()) or \
-        (datetime.datetime.utcnow() - self.last_update > _MAX_CHECKIN_DATA_AGE)
+    if (not self.checkins) or (not self.checkins.length()):
+      return True
+
+    last_update_delta = datetime.datetime.utcnow() - self.last_update
+    if self.is_updating and last_update_delta > _MAX_IN_UPDATE_DATA_AGE:
+      return True
+
+    if last_update_delta > _MAX_CHECKIN_DATA_AGE:
+      return True
+
+    return False
 
   @staticmethod
   def get_by_external_id(external_id):

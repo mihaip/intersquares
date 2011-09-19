@@ -3,6 +3,8 @@ import urllib
 
 from google.appengine.api import mail
 from google.appengine.api import taskqueue
+from google.appengine.ext import db
+from google.appengine.runtime import apiproxy_errors
 
 import base.handlers
 import data.checkins
@@ -47,7 +49,18 @@ class UpdateCheckinsTaskHandler(base.handlers.BaseHandler):
     if not has_more:
       user.is_updating = False
 
-    user.put()
+    try:
+      user.put()
+    except (db.BadRequestError, apiproxy_errors.RequestTooLargeError), err:
+      logging.exception(err)
+      logging.error(
+          '%s has too many checkins (%d), dropping some',
+          user.foursquare_id, user.checkins.length())
+      user.checkins.drop_old_checkins()
+      logging.error(
+          '%s now has %d checkins',
+          user.foursquare_id, user.checkins.length())
+      user.put()
 
     if has_more:
       taskqueue.add(
