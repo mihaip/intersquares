@@ -85,10 +85,10 @@ class User(db.Model):
   def get_by_foursquare_id(foursquare_id, api):
     user = User.all().filter('foursquare_id = ', foursquare_id).get()
 
-    if not user:
+    if not user and api:
       user = User._create(foursquare_id, api)
       user.put()
-    elif user._is_stale():
+    elif user._is_stale() and api:
       user._update(api)
       user.put()
 

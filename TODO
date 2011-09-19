@@ -1,6 +1,5 @@
 todo:
-- ui
-  - link to my external ID from the homepage
+- exceptions
 - intersection display
   - include checkin data in intersection (comments, photos, shouts)
   - include "also there" (either user's friends) in intersection
@@ -50,3 +49,32 @@ done:
 - include more venue data in intersection
 - include link to send to other people at the bottom
 - screenshot of sample results linked from homepage
+- link to my external ID from the homepage
+
+
+0.1.0.2 - - [18/Sep/2011:16:28:49 -0700] "POST /tasks/checkins/update HTTP/1.1" 500 550 "http://www.intersquares.com/checkins/update" "AppEngine-Google; (+http://code.google.com/appengine)" "www.intersquares.com" ms=90 cpu_ms=22 api_cpu_ms=22 cpm_usd=0.000719 queue_name=update-checkins task_name=18212586316074197120 instance=00c61b117cfd270fbc236f3b5016bb27942a
+E 2011-09-18 16:28:49.665
+'NoneType' object has no attribute 'fetch_older'
+Traceback (most recent call last):
+  File "/base/python_runtime/python_lib/versions/1/google/appengine/ext/webapp/_webapp25.py", line 703, in __call__
+    handler.post(*groups)
+  File "/base/data/home/apps/s~intersquares/1.353364848963609399/handlers/checkins.py", line 44, in post
+    has_more = user.checkins.fetch_older(api)
+AttributeError: 'NoneType' object has no attribute 'fetch_older'
+
+2011-09-18 16:40:51.676 /4sq/callback?code=NU1FS52X2MLHJ3ZJOC5C0Q2ZU3YCQRJKEDW4XVIOZLTFGZNS 500 5160ms 0cpu_ms 0kb Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_1) AppleWebKit/535.2 (KHTML, like Gecko) Chrome/15.0.874.15 Safari/535.2
+173.247.192.202 - - [18/Sep/2011:16:40:51 -0700] "GET /4sq/callback?code=NU1FS52X2MLHJ3ZJOC5C0Q2ZU3YCQRJKEDW4XVIOZLTFGZNS HTTP/1.1" 500 563 "http://www.intersquares.com/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_1) AppleWebKit/535.2 (KHTML, like Gecko) Chrome/15.0.874.15 Safari/535.2" "www.intersquares.com" ms=5160 cpu_ms=0 api_cpu_ms=0 cpm_usd=0.000371 instance=00c61b117cfd270fbc236f3b5016bb27942a
+E 2011-09-18 16:40:51.668
+No JSON object could be decoded: line 1 column 0 (char 0)
+Traceback (most recent call last):
+  File "/base/python_runtime/python_lib/versions/1/google/appengine/ext/webapp/_webapp25.py", line 701, in __call__
+    handler.get(*groups)
+  File "/base/data/home/apps/s~intersquares/1.353364848963609399/handlers/session.py", line 34, in get
+    oauth_token = simplejson.loads(auth_json.content)['access_token']
+  File "/base/python_runtime/python_lib/versions/1/simplejson/__init__.py", line 388, in loads
+    return _default_decoder.decode(s)
+  File "/base/python_runtime/python_lib/versions/1/simplejson/decoder.py", line 402, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+  File "/base/python_runtime/python_lib/versions/1/simplejson/decoder.py", line 420, in raw_decode
+    raise JSONDecodeError("No JSON object could be decoded", s, idx)
+JSONDecodeError: No JSON object could be decoded: line 1 column 0 (char 0)

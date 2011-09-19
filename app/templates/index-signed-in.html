@@ -48,6 +48,16 @@ Hello {% include "user.snippet" %} &mdash; you're almost there.
       in that long URL.
     </li>
   </ul>
+
+  {% if mihai_user and mihai_short_url %}
+    <p>
+      If you're at a loss for what to do next, perhaps you'd like to compute
+      intersections with
+      {% with mihai_user as user %} {% include "user.snippet" %} {% endwith %}
+      (the guy who made this thing). Just <a href="{{ mihai_short_url }}">use
+      this link</a> to see if you would have met him anywhere.
+    </p>
+  {% endif %}
 </div>
 
 <div class="fader faded-out" id="recent-intersections-content">
