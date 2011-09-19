@@ -14,19 +14,19 @@ class CheckinsProperty(base.util.PickledProperty):
 
 class User(db.Model):
   foursquare_id = db.StringProperty(required=True)
-  last_update = db.DateTimeProperty(auto_now=True)
-  is_updating = db.BooleanProperty()
+  last_update = db.DateTimeProperty(auto_now=True,indexed=False)
+  is_updating = db.BooleanProperty(indexed=False)
 
   # User info
-  first_name = db.TextProperty()
-  last_name = db.TextProperty()
-  home_city = db.TextProperty()
-  photo_url = db.TextProperty()
-  gender = db.TextProperty()
-  phone_number = db.TextProperty()
-  twitter_username = db.TextProperty()
-  facebook_id = db.TextProperty()
-  email_address = db.TextProperty()
+  first_name = db.TextProperty(indexed=False)
+  last_name = db.TextProperty(indexed=False)
+  home_city = db.TextProperty(indexed=False)
+  photo_url = db.TextProperty(indexed=False)
+  gender = db.TextProperty(indexed=False)
+  phone_number = db.TextProperty(indexed=False)
+  twitter_username = db.TextProperty(indexed=False)
+  facebook_id = db.TextProperty(indexed=False)
+  email_address = db.TextProperty(indexed=False)
 
   checkins = CheckinsProperty()
 
