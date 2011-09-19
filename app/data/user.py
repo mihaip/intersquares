@@ -72,7 +72,7 @@ class User(db.Model):
     return 'they'
 
   def needs_checkin_update(self):
-    return (not self.checkins) or \
+    return (not self.checkins) or (not self.checkins.length()) or \
         (datetime.datetime.utcnow() - self.last_update > _MAX_CHECKIN_DATA_AGE)
 
   @staticmethod
@@ -89,7 +89,7 @@ class User(db.Model):
     if not user and api:
       user = User._create(foursquare_id, api)
       user.put()
-    elif user._is_stale() and api:
+    elif user and user._is_stale() and api:
       user._update(api)
       user.put()
 

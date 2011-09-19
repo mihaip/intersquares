@@ -8,6 +8,7 @@ todo:
   - handle intersections with friends
   - handle no intersections
 - good behavior
+  - expose checkin clear handler
   - ereporter
   - handle oauth token revocation
   - api error handling

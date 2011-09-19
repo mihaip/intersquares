@@ -14,12 +14,13 @@ class IndexHandler(base.handlers.ApiHandler):
     # the viewport that it's rendered with (QrCodeIntersectHandler does that)
     qr_code_url = 'q/' + self._session.external_id
 
-    mihai_user = data.user.User.get_by_foursquare_id('2118', None)
-    if mihai_user:
-      mihai_session = data.session.Session.get_by_foursquare_id('2118')
-      mihai_short_url = self._generate_absolute_url('i/' + mihai_session.external_id)
-    else:
-      mihai_short_url = None
+    mihai_user = None
+    mihai_short_url = None
+    if user.foursquare_id != '2118':
+      mihai_user = data.user.User.get_by_foursquare_id('2118', None)
+      if mihai_user:
+        mihai_session = data.session.Session.get_by_foursquare_id('2118')
+        mihai_short_url = self._generate_absolute_url('i/' + mihai_session.external_id)
 
     self._write_template(
         'index-signed-in.html', {

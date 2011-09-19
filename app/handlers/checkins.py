@@ -75,7 +75,7 @@ class ClearCheckinsHandler(base.handlers.ApiHandler):
     user = self._get_user()
     user.checkins = data.checkins.Checkins()
     user.put()
-    self.redirect('/')
+    self.response.out.write('OK')
 
 class BaseIntersectHandler(base.handlers.ApiHandler):
   def _get_other_user(self):
