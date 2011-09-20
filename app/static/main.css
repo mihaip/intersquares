@@ -185,3 +185,13 @@ a {
 .intersection-list li {
   padding: 1em 0;
 }
+
+#vote-link {
+  display: block;
+  background: #ffa;
+  border-bottom: solid 1px #ccc;
+  text-align: center;
+  text-decoration: none;
+  font-weight: bold;
+  padding: 2px 0;
+}
