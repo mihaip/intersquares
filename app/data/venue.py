@@ -41,13 +41,17 @@ class Venue(db.Model):
 
   @staticmethod
   def create_if_needed(venue_json_data):
+    def sanitize(s):
+      if not s: return s
+      return s.replace('\n', ' ').replace('\r', ' ')
+
     venue_id = venue_json_data['id']
     existing = Venue.get_by_venue_id(venue_id)
     if existing:
       return existing, False
 
     venue = Venue(key_name = venue_id, venue_id = venue_id)
-    venue.name = venue_json_data.get('name', None)
+    venue.name = sanitize(venue_json_data.get('name', None))
     if venue_json_data.get('categories', []):
       venue.icon = venue_json_data['categories'][0]['icon']
     else:
@@ -55,9 +59,9 @@ class Venue(db.Model):
 
     if 'location' in venue_json_data:
       venue_location_json_data = venue_json_data.get('location', {})
-      venue.city = venue_location_json_data.get('city', None)
-      venue.state = venue_location_json_data.get('state', None)
-      venue.country = venue_location_json_data.get('country', None)
+      venue.city = sanitize(venue_location_json_data.get('city', None))
+      venue.state = sanitize(venue_location_json_data.get('state', None))
+      venue.country = sanitize(venue_location_json_data.get('country', None))
       venue.lat = venue_location_json_data.get('lat', None)
       venue.lng = venue_location_json_data.get('lng', None)
 
