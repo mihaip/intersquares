@@ -8,6 +8,7 @@ import pytz
 import base.interval_tree
 import base.util
 import data.checkin
+import data.venue
 
 # If we're mid-update and the user hasn't been modified, the update process
 # is probably stuck, so try to restart it.
@@ -77,9 +78,19 @@ class CheckinsData(object):
     self._checkins_by_id = {}
 
   def append_api_response(self, checkins_json_data):
+    seen_venue_ids = set()
     new_count = 0
     for checkin_json_data in checkins_json_data['checkins']['items']:
       checkin = data.checkin.Checkin(checkin_json_data)
+
+      if 'venue' in checkin_json_data:
+        venue_json_data = checkin_json_data['venue']
+        if 'id' in venue_json_data:
+          venue_id = venue_json_data['id']
+          if venue_id not in seen_venue_ids:
+            data.venue.Venue.create_if_needed(venue_json_data)
+            seen_venue_ids.add(venue_id)
+
       if checkin.id not in self._checkins_by_id:
         new_count += 1
       self._checkins_by_id[checkin.id] = checkin

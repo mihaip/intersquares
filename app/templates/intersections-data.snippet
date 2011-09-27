@@ -7,7 +7,7 @@
   {{ intersection|length }} places together.
 </p>
 
-{% for this_user_checkin, other_user_checkin in intersection %}
+{% for this_user_checkin, other_user_checkin, venue in intersection %}
   {% ifchanged this_user_checkin.display_date %}
     <h2 class="date-header">
       <div class="year" style="display: {% cycle block,none,none,none,none %}">{{ this_user_checkin.display_year }}</div>
@@ -18,10 +18,10 @@
   <table class="details">
     <tr>
       <td rowspan="2" class="icon">
-        <img src="{{ this_user_checkin.venue_icon }}" width="32" height="32" alt="">
+        <img src="{{ venue.icon }}" width="32" height="32" alt="">
       </td>
       <td>
-        <a href="https://foursquare.com/venue/{{ this_user_checkin.venue_id }}" class="venue">{{ this_user_checkin.venue_name }}</a>
+        <a href="https://foursquare.com/venue/{{ venue.venue_id }}" class="venue">{{ venue.name }}</a>
         at
         <a href="https://foursquare.com/user/{{this_user.foursquare_id }}/checkin/{{ this_user_checkin.id }}">{{ this_user_checkin.display_time }}</a>
         and
@@ -30,11 +30,11 @@
     </tr>
     <tr>
       <td class="location">
-        {% if this_user_checkin.has_venue_location %}
-          {% if this_user_checkin.has_venue_location_url %}
-            <a href="{{ this_user_checkin.venue_location_url }}" target="_blank">{{ this_user_checkin.display_venue_location }}</a>
+        {% if venue.has_location %}
+          {% if venue.has_location_url %}
+            <a href="{{ venue.location_url }}" target="_blank">{{ venue.display_location }}</a>
           {% else %}
-            {{ this_user_checkin.display_venue_location }}
+            {{ venue.display_location }}
           {% endif %}
         {% endif %}
       </td>

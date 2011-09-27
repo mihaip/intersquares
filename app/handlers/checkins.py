@@ -11,6 +11,7 @@ import data.checkins
 import data.intersection
 import data.session
 import data.user
+import data.venue
 
 class UpdateCheckinsHandler(base.handlers.ApiHandler):
   def _get_signed_in(self):
@@ -202,7 +203,19 @@ class IntersectCheckinsDataHandler(BaseIntersectHandler):
 
     other_user_checkins = data.checkins.Checkins.get_for_user(other_user)
     logging.info('Loaded other_user (%s) checkins (%d)', other_user.foursquare_id, other_user_checkins.length())
-    intersection_data = this_user_checkins.intersection(other_user_checkins)
+    intersection_raw_data = this_user_checkins.intersection(other_user_checkins)
+
+    venue_ids = list(set([t.venue_id for t,o in intersection_raw_data]))
+    venues = data.venue.Venue.get_by_key_name(key_names = venue_ids)
+    venues_by_venue_id = dict((v.venue_id, v) for v in venues if v)
+
+    intersection_data = []
+    for this_user_checkin, other_user_checkin in intersection_raw_data:
+      intersection_data.append((
+          this_user_checkin,
+          other_user_checkin,
+          venues_by_venue_id[this_user_checkin.venue_id]))
+
     intersection_data.reverse()
 
     intersection = data.intersection.Intersection.create_or_update(
