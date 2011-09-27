@@ -74,8 +74,8 @@ a {
 
 #sign-out-link {
   position: absolute;
-  top: 3ex;
-  right: 0;
+  top: 0;
+  right: .2ex;
   padding: 7px;
   border-radius: 0 0 10px 0;
 }
