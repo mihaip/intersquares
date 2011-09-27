@@ -35,6 +35,10 @@ class UpdateCheckinsHandler(base.handlers.ApiHandler):
 
 class ReloadCheckinsAdminHandler(base.handlers.BaseHandler):
   def get(self):
+    max_update_count = -1
+    if self.request.get('max_update_count'):
+      max_update_count = int(self.request.get('max_update_count'))
+
     update_count = 0
     for session in data.session.Session.all():
       update_count += 1
@@ -45,6 +49,8 @@ class ReloadCheckinsAdminHandler(base.handlers.BaseHandler):
             'oauth_token': session.oauth_token,
             'foursquare_id': session.foursquare_id,
           })
+      if max_update_count != -1 and update_count == max_update_count:
+        break
     self.response.out.write('Kicked off %d updates' % update_count)
 
 class ClearCheckinsTaskHandler(base.handlers.BaseHandler):
