@@ -81,15 +81,18 @@ class UpdateCheckinsTaskHandler(base.handlers.BaseHandler):
         self.request.get('foursquare_id'))
     direction = self.request.get('direction')
 
-    logging.info('Updating checkins for %s (direction: %s)',
-        checkins.foursquare_id, direction)
+    logging.info('Updating checkins (%d so far) for %s (direction: %s)',
+        checkins.length(), checkins.foursquare_id, direction)
 
     if direction == 'forward':
-      has_more = checkins.fetch_newer(api)
+      new_checkin_count = checkins.fetch_newer(api)
     else:
-      has_more = checkins.fetch_older(api)
+      new_checkin_count = checkins.fetch_older(api)
 
-    if not has_more:
+    logging.info('Got %d new checkins, %d total',
+        new_checkin_count, checkins.length())
+
+    if not new_checkin_count:
       checkins.is_updating = False
 
     try:
@@ -105,7 +108,7 @@ class UpdateCheckinsTaskHandler(base.handlers.BaseHandler):
           checkins.foursquare_id, checkins.length())
       checkins.put()
 
-    if has_more:
+    if new_checkin_count:
       taskqueue.add(
           queue_name='update-checkins',
           url='/tasks/checkins/update',

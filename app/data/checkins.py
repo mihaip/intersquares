@@ -148,16 +148,16 @@ class Checkins(db.Model):
 
   def fetch_newer(self, api):
     after_timestamp = self.length() and self.data.newest().created_at or None
-    return self._fetch(api, after_timestamp=after_timestamp) > 0
+    return self._fetch(api, after_timestamp=after_timestamp)
 
   def fetch_older(self, api):
     if self.length():
       return self._fetch(
           api,
           after_timestamp=self.data.newest().created_at,
-          before_timestamp=END_OF_TIME) > 0
+          before_timestamp=END_OF_TIME)
     else:
-      return self._fetch(api, before_timestamp=END_OF_TIME) > 0
+      return self._fetch(api, before_timestamp=END_OF_TIME)
 
   def clear(self):
     self.data = None
