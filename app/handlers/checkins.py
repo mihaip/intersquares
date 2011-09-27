@@ -55,9 +55,12 @@ class ClearCheckinsTaskHandler(base.handlers.BaseHandler):
 
     # Clear user data and regenerate it from Foursquare
     user = data.user.User.get_by_foursquare_id(foursquare_id, None)
+    doesnt_want_mail = user.doesnt_want_mail
     user.delete()
     user = data.user.User.get_by_foursquare_id(
         foursquare_id, base.api.Api(oauth_token))
+    user.doesnt_want_mail = doesnt_want_mail
+    user.put()
 
     # Clear checkin data and kick off the task to update it
     checkins = data.checkins.Checkins.get_by_foursquare_id(foursquare_id)
