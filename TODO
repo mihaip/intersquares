@@ -1,7 +1,6 @@
 todo:
 - page titles
 - intersection display
-  - always display year label on first/last checkin of the year (see dolapo/me 2006 intersection confusion)
   - include checkin data in intersection (comments, photos, shouts)
   - include "also there" (either user's friends) in intersection
   - display all that on hover/click over an intersection
@@ -53,3 +52,4 @@ done:
 - handle no intersections
 - move checkins to separate entity
 - move venues to separate entities
+- always display year label on first/last checkin of the year (see dolapo/me 2006 intersection confusion)
