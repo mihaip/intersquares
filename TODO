@@ -1,7 +1,4 @@
 todo:
-- data model
-  - move checkins to separate entity
-  - move venues to separate entities
 - page titles
 - intersection display
   - always display year label on first/last checkin of the year (see dolapo/me 2006 intersection confusion)
@@ -54,3 +51,5 @@ done:
 - mobile viewport
 - option to email match notifications
 - handle no intersections
+- move checkins to separate entity
+- move venues to separate entities
