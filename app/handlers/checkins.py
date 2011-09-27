@@ -243,8 +243,6 @@ class IntersectCheckinsDataHandler(BaseIntersectHandler):
           other_user_checkin,
           venues_by_venue_id[this_user_checkin.venue_id]))
 
-    intersection_data.reverse()
-
     intersection = data.intersection.Intersection.create_or_update(
         base_foursquare_id = this_user.foursquare_id,
         base_external_id = self._session.external_id,

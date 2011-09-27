@@ -13,7 +13,7 @@
       {% ifchanged this_user_checkin.display_year %}
         <div class="year">{{ this_user_checkin.display_year }}</div>
       {% else %}
-        <div class="year" style="display: {% cycle block,none,none,none,none %}">{{ this_user_checkin.display_year }}</div>
+        <div class="year" style="display: {% cycle none,none,none,none,block %}">{{ this_user_checkin.display_year }}</div>
       {% endifchanged %}
       {{ this_user_checkin.display_short_date }}
     </h2>
