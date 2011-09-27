@@ -13,6 +13,8 @@ import handlers.checkins
 
 def main():
   application = webapp.WSGIApplication([
+          ('/admin/checkins/reload', handlers.checkins.ReloadCheckinsAdminHandler),
+          ('/tasks/checkins/clear', handlers.checkins.ClearCheckinsTaskHandler),
           ('/tasks/checkins/update', handlers.checkins.UpdateCheckinsTaskHandler),
       ],
       debug=True)

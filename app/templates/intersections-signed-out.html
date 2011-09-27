@@ -5,7 +5,7 @@
 <p>
   Curious to see where you would have met
   {% with other_user as user %}{% include "user.snippet" %}{% endwith %}?
-  {{ other_user.pronoun|capfirst }} has {{ other_user.checkins.length }}
+  {{ other_user.pronoun|capfirst }} has {{ other_user_checkins.length }}
   Foursquare checkins, perhaps you were at some of the same places too.
 </p>
 
@@ -20,13 +20,14 @@
 </div>
 
 <p>
-  Intrigued by the idea, but don't want to intersect your checkins with
-  {{ other_user.first_name }}'s? Go to the <a href="/">homepage</a> to
-  generate your own link.
+  Don't worry, we won't update your status or otherwise mess with your checkins.
 </p>
 
 <p>
-  Don't worry, we won't update your status or otherwise mess with your checkins.
+  <br><br>
+  Intrigued by the idea, but don't want to intersect your checkins with
+  {{ other_user.first_name }}'s? Go to the <a href="/">homepage</a> to
+  generate your own link.
 </p>
 
 {% endblock %}

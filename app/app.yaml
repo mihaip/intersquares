@@ -11,8 +11,8 @@ handlers:
   static_files: static/favicon.png
   upload: static/favicon.png
 
-- url: /tasks/.*
-  script: tasks.py
+- url: /(tasks|admin)/.*
+  script: tasks_admin.py
   login: admin
 
 - url: .*

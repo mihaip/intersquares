@@ -2,10 +2,17 @@ import calendar
 import datetime
 import logging
 
+from google.appengine.ext import db
 import pytz
 
 import base.interval_tree
+import base.util
 import data.checkin
+
+# If we're mid-update and the user hasn't been modified, the update process
+# is probably stuck, so try to restart it.
+_MAX_IN_UPDATE_DATA_AGE = datetime.timedelta(minutes=1)
+_MAX_CHECKIN_DATA_AGE = datetime.timedelta(hours=1)
 
 _HERE_NOW_DELTA = datetime.timedelta(hours=3)
 _TRAVEL_TIME_DELTA = datetime.timedelta(minutes=5)
@@ -65,18 +72,11 @@ def _compute_intersection(base_checkins, search_checkins):
 
   return intersection
 
-class Checkins(object):
+class CheckinsData(object):
   def __init__(self):
     self._checkins_by_id = {}
 
-  def _fetch(self, api, after_timestamp=None, before_timestamp=None):
-    params = {'limit': 250}
-    if after_timestamp:
-      params['afterTimestamp'] = calendar.timegm(after_timestamp.timetuple())
-    if before_timestamp:
-      params['beforeTimestamp'] = calendar.timegm(before_timestamp.timetuple())
-    checkins_json_data = api.get('users/self/checkins', params)
-
+  def append_api_response(self, checkins_json_data):
     new_count = 0
     for checkin_json_data in checkins_json_data['checkins']['items']:
       checkin = data.checkin.Checkin(checkin_json_data)
@@ -86,28 +86,11 @@ class Checkins(object):
 
     return new_count
 
-  def fetch_newer(self, api):
-    after_timestamp = self.length() and self.newest().timestamp or None
-    return self._fetch(api, after_timestamp=after_timestamp) > 0
-
-  def fetch_older(self, api):
-    if self.length():
-      return self._fetch(
-          api,
-          after_timestamp=self.newest().timestamp,
-          before_timestamp=END_OF_TIME) > 0
-    else:
-      return self._fetch(api, before_timestamp=END_OF_TIME) > 0
-
   def length(self):
     return len(self._checkins_by_id)
 
-  def oldest(self):
-    oldest = None
-    for checkin in self._checkins_by_id.values():
-      if not oldest or oldest.timestamp > checkin.timestamp:
-        oldest = checkin
-    return oldest
+  def checkins(self):
+    return self._checkins_by_id.values()
 
   def newest(self):
     newest = None
@@ -123,7 +106,89 @@ class Checkins(object):
     for checkin in sorted_checkins[350:]:
       self._checkins_by_id[checkin.id] = checkin
 
+class CheckinsDataProperty(base.util.PickledProperty):
+  force_type = CheckinsData
+
+class Checkins(db.Model):
+  foursquare_id = db.StringProperty(required=True)
+  last_update = db.DateTimeProperty(auto_now=True,indexed=False)
+  is_updating = db.BooleanProperty(indexed=False)
+  data = CheckinsDataProperty()
+
+  def length(self):
+    return self.data and self.data.length() or 0
+
+  def update_needed(self):
+    logging.info('Checking if update is needed for %s', self.foursquare_id)
+    if not self.length():
+      logging.info('  Yes, because there are no checkins')
+      return True
+
+    last_update_delta = datetime.datetime.utcnow() - self.last_update
+    if self.is_updating and last_update_delta > _MAX_IN_UPDATE_DATA_AGE:
+      logging.info('  Yes, because there is an update and the age is %s',
+          str(last_update_delta))
+      return True
+
+    if last_update_delta > _MAX_CHECKIN_DATA_AGE:
+      logging.info('  Yes, because the data age is %s', str(last_update_delta))
+      return True
+
+    logging.info('  No')
+    return False
+
+  def fetch_newer(self, api):
+    after_timestamp = self.length() and self.data.newest().timestamp or None
+    return self._fetch(api, after_timestamp=after_timestamp) > 0
+
+  def fetch_older(self, api):
+    if self.length():
+      return self._fetch(
+          api,
+          after_timestamp=self.data.newest().timestamp,
+          before_timestamp=END_OF_TIME) > 0
+    else:
+      return self._fetch(api, before_timestamp=END_OF_TIME) > 0
+
+  def clear(self):
+    self.data = None
+
+  def drop_old_checkins(self):
+    if self.data:
+      self.data.drop_old_checkins()
+
   def intersection(self, other_checkins):
-    return _compute_intersection(
-        self._checkins_by_id.values(),
-        other_checkins._checkins_by_id.values())
+    logging.info('Interection between %s (%d) and %s (%d)',
+        self.foursquare_id, self.length(),
+        other_checkins.foursquare_id, other_checkins.length())
+    if self.length() and other_checkins.length():
+      return _compute_intersection(
+          self.data.checkins(), other_checkins.data.checkins())
+    else:
+      return []
+
+  def _fetch(self, api, after_timestamp=None, before_timestamp=None):
+    params = {'limit': 250}
+    if after_timestamp:
+      params['afterTimestamp'] = calendar.timegm(after_timestamp.timetuple())
+    if before_timestamp:
+      params['beforeTimestamp'] = calendar.timegm(before_timestamp.timetuple())
+
+    if not self.data:
+      self.data = CheckinsData()
+
+    return self.data.append_api_response(api.get('users/self/checkins', params))
+
+  @staticmethod
+  def get_by_foursquare_id(foursquare_id):
+    checkins = Checkins.all().filter('foursquare_id = ', foursquare_id).get()
+
+    if not checkins:
+      checkins = Checkins(foursquare_id = foursquare_id)
+      checkins.put()
+
+    return checkins
+
+  @staticmethod
+  def get_for_user(user):
+    return Checkins.get_by_foursquare_id(user.foursquare_id)

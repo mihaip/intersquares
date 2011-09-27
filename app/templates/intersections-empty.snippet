@@ -1,9 +1,9 @@
 <p>
-  You have {{this_user.checkins.length }} checkins.
+  You have {{this_user_checkins.length }} checkins.
   {% with other_user as user %}
     {% include "user.snippet" %}
   {% endwith %}
-  has {{other_user.checkins.length }} checkins. Unfortunately it looks
+  has {{other_user_checkins.length }} checkins. Unfortunately it looks
   like you were never at the same place together. Who knows, maybe you'll
   run into each other at some point though!
 </p>

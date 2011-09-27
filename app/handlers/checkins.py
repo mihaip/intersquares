@@ -9,61 +9,93 @@ from google.appengine.runtime import apiproxy_errors
 import base.handlers
 import data.checkins
 import data.intersection
+import data.session
 import data.user
 
 class UpdateCheckinsHandler(base.handlers.ApiHandler):
   def _get_signed_in(self):
-    user = self._get_user()
+    checkins = self._get_checkins()
 
-    if user.needs_checkin_update():
-      if not user.checkins:
-        user.checkins = data.checkins.Checkins()
-      direction = user.checkins.length() and 'forward' or 'backward'
-      user.is_updating = True
-      user.put()
+    if checkins.update_needed():
+      direction = checkins.length() and 'forward' or 'backward'
+      checkins.is_updating = True
+      checkins.put()
 
       taskqueue.add(
           queue_name='update-checkins',
           url='/tasks/checkins/update',
           params={
             'oauth_token': self._session.oauth_token,
-            'foursquare_id': user.foursquare_id,
+            'foursquare_id': checkins.foursquare_id,
             'direction': direction
           })
 
     self.response.out.write('OK')
 
+class ReloadCheckinsAdminHandler(base.handlers.BaseHandler):
+  def get(self):
+    update_count = 0
+    for session in data.session.Session.all():
+      update_count += 1
+      taskqueue.add(
+          queue_name='update-checkins',
+          url='/tasks/checkins/clear',
+          params={
+            'oauth_token': session.oauth_token,
+            'foursquare_id': session.foursquare_id,
+          })
+    self.response.out.write('Kicked off %d updates' % update_count)
+
+class ClearCheckinsTaskHandler(base.handlers.BaseHandler):
+  def post(self):
+    foursquare_id = self.request.get('foursquare_id')
+    logging.info('Clearing checkins for %s', foursquare_id)
+
+    checkins = data.checkins.Checkins.get_by_foursquare_id(foursquare_id)
+    checkins.clear()
+    checkins.is_updating = True
+    checkins.put()
+
+    taskqueue.add(
+        queue_name='update-checkins',
+        url='/tasks/checkins/update',
+        params={
+          'oauth_token': self.request.get('oauth_token'),
+          'foursquare_id': foursquare_id,
+          'direction': 'backward'
+        })
+
 class UpdateCheckinsTaskHandler(base.handlers.BaseHandler):
   def post(self):
     oauth_token = self.request.get('oauth_token')
     api = base.api.Api(oauth_token)
-    user = data.user.User.get_by_foursquare_id(
-        self.request.get('foursquare_id'), api)
+    checkins = data.checkins.Checkins.get_by_foursquare_id(
+        self.request.get('foursquare_id'))
     direction = self.request.get('direction')
 
     logging.info('Updating checkins for %s (direction: %s)',
-        user.foursquare_id, direction)
+        checkins.foursquare_id, direction)
 
     if direction == 'forward':
-      has_more = user.checkins.fetch_newer(api)
+      has_more = checkins.fetch_newer(api)
     else:
-      has_more = user.checkins.fetch_older(api)
+      has_more = checkins.fetch_older(api)
 
     if not has_more:
-      user.is_updating = False
+      checkins.is_updating = False
 
     try:
-      user.put()
+      checkins.put()
     except (db.BadRequestError, apiproxy_errors.RequestTooLargeError), err:
       logging.exception(err)
       logging.error(
           '%s has too many checkins (%d), dropping some',
-          user.foursquare_id, user.checkins.length())
-      user.checkins.drop_old_checkins()
+          checkins.foursquare_id, checkins.length())
+      checkins.drop_old_checkins()
       logging.error(
           '%s now has %d checkins',
-          user.foursquare_id, user.checkins.length())
-      user.put()
+          checkins.foursquare_id, checkins.length())
+      checkins.put()
 
     if has_more:
       taskqueue.add(
@@ -71,7 +103,7 @@ class UpdateCheckinsTaskHandler(base.handlers.BaseHandler):
           url='/tasks/checkins/update',
           params={
             'oauth_token': oauth_token,
-            'foursquare_id': user.foursquare_id,
+            'foursquare_id': checkins.foursquare_id,
             'direction': direction
           })
 
@@ -79,20 +111,20 @@ class UpdateCheckinsTaskHandler(base.handlers.BaseHandler):
 
 class UpdateCheckinsStateHandler(base.handlers.ApiHandler):
   def _get_signed_in(self):
-    user = self._get_user()
+    checkins = self._get_checkins()
 
-    logging.info('Getting update state for %s', user.foursquare_id)
+    logging.info('Getting update state for %s', checkins.foursquare_id)
 
     return self._write_json({
-      'is_updating': user.is_updating or False,
-      'checkin_count': user.checkins and user.checkins.length() or 0,
+      'is_updating': checkins.is_updating or False,
+      'checkin_count': checkins.length(),
     })
 
 class ClearCheckinsHandler(base.handlers.ApiHandler):
   def _get_signed_in(self):
-    user = self._get_user()
-    user.checkins = data.checkins.Checkins()
-    user.put()
+    checkins = self._get_checkins()
+    checkins.clear()
+    checkins.put()
     self.response.out.write('OK')
 
 class BaseIntersectHandler(base.handlers.ApiHandler):
@@ -127,12 +159,14 @@ class IntersectCheckinsHandler(BaseIntersectHandler):
     other_user = self._get_other_user()
     if not other_user:
       return
+    other_user_checkins = data.checkins.Checkins.get_for_user(other_user)
 
     connect_url = '/4sq/connect?continue=%s' % urllib.quote(self.request.url)
 
     self._write_template(
         'intersections-signed-out.html', {
             'other_user': other_user,
+            'other_user_checkins': other_user_checkins,
             'connect_url': connect_url,
         })
 
@@ -142,6 +176,8 @@ class IntersectCheckinsDataHandler(BaseIntersectHandler):
     other_user = self._get_other_user()
     if not other_user:
       return
+
+    this_user_checkins = data.checkins.Checkins.get_for_user(this_user)
 
     short_url = self._generate_absolute_url('i/' + self._session.external_id)
     tweet_text = 'Use Foursquare? See where we would have met: %s' % short_url
@@ -156,6 +192,7 @@ class IntersectCheckinsDataHandler(BaseIntersectHandler):
       self._write_template(
           'intersections-self.snippet', {
               'this_user': this_user,
+              'this_user_checkins': this_user_checkins,
               'short_url': short_url,
               'tweet_text': tweet_text,
               'mihai_user': mihai_user,
@@ -163,7 +200,9 @@ class IntersectCheckinsDataHandler(BaseIntersectHandler):
           })
       return
 
-    intersection_data = this_user.checkins.intersection(other_user.checkins)
+    other_user_checkins = data.checkins.Checkins.get_for_user(other_user)
+    logging.info('Loaded other_user (%s) checkins (%d)', other_user.foursquare_id, other_user_checkins.length())
+    intersection_data = this_user_checkins.intersection(other_user_checkins)
     intersection_data.reverse()
 
     intersection = data.intersection.Intersection.create_or_update(
@@ -188,6 +227,8 @@ class IntersectCheckinsDataHandler(BaseIntersectHandler):
           'intersections-empty.snippet', {
             'this_user': this_user,
             'other_user': other_user,
+            'this_user_checkins': this_user_checkins,
+            'other_user_checkins': other_user_checkins,
             'short_url': short_url,
             'tweet_text': tweet_text,
           })
@@ -197,6 +238,8 @@ class IntersectCheckinsDataHandler(BaseIntersectHandler):
         'intersections-data.snippet', {
             'this_user': this_user,
             'other_user': other_user,
+            'this_user_checkins': this_user_checkins,
+            'other_user_checkins': other_user_checkins,
             'intersection': intersection_data,
             'short_url': short_url,
             'tweet_text': tweet_text,

@@ -2,23 +2,13 @@ import datetime
 
 from google.appengine.ext import db
 
-import base.util
-import data.checkins
 import data.session
 
-# If we're mid-update and the user hasn't been modified, the update process
-# is probably stuck, so try to restart it.
-_MAX_IN_UPDATE_DATA_AGE = datetime.timedelta(minutes=1)
 _MAX_USER_DATA_AGE = datetime.timedelta(days=1)
-_MAX_CHECKIN_DATA_AGE = datetime.timedelta(hours=1)
-
-class CheckinsProperty(base.util.PickledProperty):
-  force_type = data.checkins.Checkins
 
 class User(db.Model):
   foursquare_id = db.StringProperty(required=True)
   last_update = db.DateTimeProperty(auto_now=True,indexed=False)
-  is_updating = db.BooleanProperty(indexed=False)
   doesnt_want_mail = db.BooleanProperty(indexed=False)
 
   # User info
@@ -31,17 +21,6 @@ class User(db.Model):
   twitter_username = db.TextProperty(indexed=False)
   facebook_id = db.TextProperty(indexed=False)
   email_address = db.TextProperty(indexed=False)
-
-  checkins = CheckinsProperty()
-
-  def has_checkins(self):
-    return self.checkins != None and self.checkins.length()
-
-  def get_oldest_checkin_time(self):
-    return self.checkins.oldest().time
-
-  def get_newest_checkin_time(self):
-    return self.checkins.newest().time
 
   def _is_stale(self):
     return datetime.datetime.utcnow() - self.last_update > _MAX_USER_DATA_AGE
@@ -73,19 +52,6 @@ class User(db.Model):
     if self.gender == 'male': return 'he'
     if self.gender == 'female': return 'she'
     return 'they'
-
-  def needs_checkin_update(self):
-    if (not self.checkins) or (not self.checkins.length()):
-      return True
-
-    last_update_delta = datetime.datetime.utcnow() - self.last_update
-    if self.is_updating and last_update_delta > _MAX_IN_UPDATE_DATA_AGE:
-      return True
-
-    if last_update_delta > _MAX_CHECKIN_DATA_AGE:
-      return True
-
-    return False
 
   @staticmethod
   def get_by_external_id(external_id):

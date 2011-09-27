@@ -8,6 +8,7 @@ from google.appengine.ext.webapp import template
 
 import base.api
 import base.constants
+import data.checkins
 import data.session
 import data.user
 import foursquare_config
@@ -130,3 +131,7 @@ class ApiHandler(FoursquareOAuthHandler):
   def _get_user(self):
     return data.user.User.get_by_foursquare_id(
         self._session.foursquare_id, self._api)
+
+  def _get_checkins(self):
+    return data.checkins.Checkins.get_by_foursquare_id(
+        self._session.foursquare_id)
