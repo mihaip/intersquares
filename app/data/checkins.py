@@ -77,6 +77,7 @@ class CheckinsData(object):
 
   def append_api_response(self, checkins_json_data):
     seen_venue_ids = set()
+    new_venues = []
     new_count = 0
     for checkin_json_data in checkins_json_data['checkins']['items']:
       checkin = data.checkin.Checkin(checkin_json_data)
@@ -86,12 +87,18 @@ class CheckinsData(object):
         if 'id' in venue_json_data:
           venue_id = venue_json_data['id']
           if venue_id not in seen_venue_ids:
-            data.venue.Venue.create_if_needed(venue_json_data)
+            venue, is_new, = data.venue.Venue.create_if_needed(venue_json_data)
             seen_venue_ids.add(venue_id)
+            if is_new:
+              new_venues.append(venue)
 
       if checkin.id not in self._checkins_by_id:
         new_count += 1
       self._checkins_by_id[checkin.id] = checkin
+
+    if new_venues:
+      logging.info('Saving %d new venues', len(new_venues))
+      db.put(new_venues)
 
     return new_count
 

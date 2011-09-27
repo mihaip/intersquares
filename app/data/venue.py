@@ -44,7 +44,7 @@ class Venue(db.Model):
     venue_id = venue_json_data['id']
     existing = Venue.get_by_venue_id(venue_id)
     if existing:
-      return existing
+      return existing, False
 
     venue = Venue(key_name = venue_id, venue_id = venue_id)
     venue.name = venue_json_data.get('name', None)
@@ -61,9 +61,7 @@ class Venue(db.Model):
       venue.lat = venue_location_json_data.get('lat', None)
       venue.lng = venue_location_json_data.get('lng', None)
 
-    venue.put()
-
-    return venue
+    return venue, True
 
   @staticmethod
   def get_by_venue_id(venue_id):
