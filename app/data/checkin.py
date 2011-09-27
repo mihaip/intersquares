@@ -7,28 +7,29 @@ import pytz
 class Checkin(object):
   def __init__(self, json_data):
     self.id = json_data['id']
-    self.type = json_data['type']
-    self.private = 'private' in json_data
+    self.private = 'private' in json_data or json_data['type'] != 'checkin'
     self.timezone = json_data.get('timeZone', None)
     if 'venue' in json_data:
       venue_json_data = json_data['venue']
       self.venue_id = venue_json_data['id']
     else:
       self.venue_id = None
-    self.timestamp = datetime.datetime.fromtimestamp(
-        json_data['createdAt'], pytz.UTC)
+    self.created_at = json_data['createdAt']
 
     # TODO(mihaip): shout, comments, photos, overlaps
 
   def should_use(self):
-    return self.type == 'checkin' and not self.private and self.venue_id
+    return not self.private and self.venue_id
+
+  def timestamp(self):
+    return datetime.datetime.fromtimestamp(self.created_at, pytz.UTC)
 
   def get_local_timestamp(self):
     if self.timezone:
       tzinfo = pytz.timezone(self.timezone)
       if tzinfo:
-        return self.timestamp.astimezone(tzinfo)
-    return self.timestamp
+        return self.timestamp().astimezone(tzinfo)
+    return self.timestamp()
 
   def display_year(self):
     return self.get_local_timestamp().strftime('%Y')
@@ -45,9 +46,9 @@ class Checkin(object):
   def __str__(self):
     return simplejson.dumps({
       'id': self.id,
-      'type': self.type,
       'private': self.private,
       'venue_id': self.venue_id,
-      'timestamp': str(self.timestamp),
+      'created_at': self.created_at,
+      'timestamp': str(self.timestamp()),
     }, indent=2)
 

@@ -15,28 +15,27 @@ import data.venue
 _MAX_IN_UPDATE_DATA_AGE = datetime.timedelta(minutes=1)
 _MAX_CHECKIN_DATA_AGE = datetime.timedelta(hours=1)
 
-_HERE_NOW_DELTA = datetime.timedelta(hours=3)
-_TRAVEL_TIME_DELTA = datetime.timedelta(minutes=5)
+_HERE_NOW_DELTA = 3 * 60 * 60
+_TRAVEL_TIME_DELTA = 5 * 60
 
 # Date far into the future (2038) passed in as a beforeTimestamp to trigger
 # consistent paging behavior (otherwise queries without beforeTimestamp
 # return in reverse-chronological order, and those with it return in
 # chronological order).
-END_OF_TIME = datetime.datetime.fromtimestamp((2 << 30) - 1, pytz.UTC)
+END_OF_TIME = (1 << 31) - 1
 
 class CheckinInterval(object):
   def __init__(self, checkin, next_checkin):
-      # TODO(mihaip): so many datetime conversions is probably a bad idea
-      self.start = calendar.timegm(checkin.timestamp.timetuple())
-      end_timestamp = checkin.timestamp + _HERE_NOW_DELTA
-      if next_checkin and end_timestamp > next_checkin.timestamp:
+      self.start = checkin.created_at
+      end_timestamp = checkin.created_at + _HERE_NOW_DELTA
+      if next_checkin and end_timestamp > next_checkin.created_at:
         # TODO(mihaip): travel time should be a function of distance
-        end_timestamp = next_checkin.timestamp - _TRAVEL_TIME_DELTA
-      self.stop = calendar.timegm(end_timestamp.timetuple())
+        end_timestamp = next_checkin.created_at - _TRAVEL_TIME_DELTA
+      self.stop = end_timestamp
       self.checkin = checkin
 
 def _get_intervals(checkins):
-  sorted_checkins = sorted(checkins, key=lambda checkin: checkin.timestamp)
+  sorted_checkins = sorted(checkins, key=lambda checkin: checkin.created_at)
   intervals = []
   for i in xrange(0, len(sorted_checkins) - 1):
     intervals.append(
@@ -106,13 +105,13 @@ class CheckinsData(object):
   def newest(self):
     newest = None
     for checkin in self._checkins_by_id.values():
-      if not newest or newest.timestamp < checkin.timestamp:
+      if not newest or newest.created_at < checkin.created_at:
         newest = checkin
     return newest
 
   def drop_old_checkins(self):
     sorted_checkins = sorted(
-        self._checkins_by_id.values(), key=lambda checkin: checkin.timestamp)
+        self._checkins_by_id.values(), key=lambda checkin: checkin.created_at)
     self._checkins_by_id = {}
     for checkin in sorted_checkins[350:]:
       self._checkins_by_id[checkin.id] = checkin
@@ -149,14 +148,14 @@ class Checkins(db.Model):
     return False
 
   def fetch_newer(self, api):
-    after_timestamp = self.length() and self.data.newest().timestamp or None
+    after_timestamp = self.length() and self.data.newest().created_at or None
     return self._fetch(api, after_timestamp=after_timestamp) > 0
 
   def fetch_older(self, api):
     if self.length():
       return self._fetch(
           api,
-          after_timestamp=self.data.newest().timestamp,
+          after_timestamp=self.data.newest().created_at,
           before_timestamp=END_OF_TIME) > 0
     else:
       return self._fetch(api, before_timestamp=END_OF_TIME) > 0
@@ -181,9 +180,9 @@ class Checkins(db.Model):
   def _fetch(self, api, after_timestamp=None, before_timestamp=None):
     params = {'limit': 250}
     if after_timestamp:
-      params['afterTimestamp'] = calendar.timegm(after_timestamp.timetuple())
+      params['afterTimestamp'] = after_timestamp
     if before_timestamp:
-      params['beforeTimestamp'] = calendar.timegm(before_timestamp.timetuple())
+      params['beforeTimestamp'] = before_timestamp
 
     if not self.data:
       self.data = CheckinsData()
