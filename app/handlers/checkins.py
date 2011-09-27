@@ -39,7 +39,7 @@ class ReloadCheckinsAdminHandler(base.handlers.BaseHandler):
     for session in data.session.Session.all():
       update_count += 1
       taskqueue.add(
-          queue_name='update-checkins',
+          queue_name='clear-checkins',
           url='/tasks/checkins/clear',
           params={
             'oauth_token': session.oauth_token,
@@ -50,18 +50,25 @@ class ReloadCheckinsAdminHandler(base.handlers.BaseHandler):
 class ClearCheckinsTaskHandler(base.handlers.BaseHandler):
   def post(self):
     foursquare_id = self.request.get('foursquare_id')
+    oauth_token = self.request.get('oauth_token')
     logging.info('Clearing checkins for %s', foursquare_id)
 
+    # Clear user data and regenerate it from Foursquare
+    user = data.user.User.get_by_foursquare_id(foursquare_id, None)
+    user.delete()
+    user = data.user.User.get_by_foursquare_id(
+        foursquare_id, base.api.Api(oauth_token))
+
+    # Clear checkin data and kick off the task to update it
     checkins = data.checkins.Checkins.get_by_foursquare_id(foursquare_id)
     checkins.clear()
     checkins.is_updating = True
     checkins.put()
-
     taskqueue.add(
         queue_name='update-checkins',
         url='/tasks/checkins/update',
         params={
-          'oauth_token': self.request.get('oauth_token'),
+          'oauth_token': oauth_token,
           'foursquare_id': foursquare_id,
           'direction': 'backward'
         })

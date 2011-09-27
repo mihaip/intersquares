@@ -9,10 +9,12 @@ sys.path.insert(0, os.path.join(os.path.abspath(os.path.dirname(__file__)), 'thi
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import util
 
+import handlers.admin
 import handlers.checkins
 
 def main():
   application = webapp.WSGIApplication([
+          ('/admin/', handlers.admin.IndexHandler),
           ('/admin/checkins/reload', handlers.checkins.ReloadCheckinsAdminHandler),
           ('/tasks/checkins/clear', handlers.checkins.ClearCheckinsTaskHandler),
           ('/tasks/checkins/update', handlers.checkins.UpdateCheckinsTaskHandler),

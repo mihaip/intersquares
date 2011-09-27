@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block body %}
+
+<form method="POST" action="/tasks/checkins/clear">
+  <label>
+    Foursquare ID:
+    <input type="text" name="foursquare_id" size="20">
+  </label><br>
+
+  <label>
+    OAuth Token:
+    <input type="text" name="oauth_token" size="60">
+  </label><br>
+
+  <input type="submit">
+</form>
+
+{% endblock %}

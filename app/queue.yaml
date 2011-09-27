@@ -2,3 +2,7 @@ queue:
 - name: update-checkins
   rate: 10/s
   bucket_size: 20
+
+- name: clear-checkins
+  rate: 1/s
+  bucket_size: 10
