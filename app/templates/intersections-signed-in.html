@@ -9,22 +9,27 @@
   updateCheckins(
       indicatorNode,
       function() {
-        indicatorNode.textContent += ' Computing the intersection...';
-        loadIntersections(
+        updateCheckinsForOtherUser(
             '{{ other_user_external_id|escapejs }}',
-            function(intersectionsHtml) {
-              indicatorNode.textContent += ' Done!';
-              goog.dom.classes.addRemove(
-                  indicatorNode, 'faded-in', 'faded-out');
-
-              setTimeout(
-                  function() {
-                    goog.dom.removeNode(indicatorNode);
-                    var intersectionsNode = goog.dom.$('intersections');
-                    intersectionsNode.innerHTML = intersectionsHtml;
+            indicatorNode,
+            function() {
+              indicatorNode.textContent += ' Computing the intersection...';
+              loadIntersections(
+                  '{{ other_user_external_id|escapejs }}',
+                  function(intersectionsHtml) {
+                    indicatorNode.textContent += ' Done!';
                     goog.dom.classes.addRemove(
-                        intersectionsNode, 'faded-out', 'faded-in');
-                  }, 400);
+                        indicatorNode, 'faded-in', 'faded-out');
+
+                    setTimeout(
+                        function() {
+                          goog.dom.removeNode(indicatorNode);
+                          var intersectionsNode = goog.dom.$('intersections');
+                          intersectionsNode.innerHTML = intersectionsHtml;
+                          goog.dom.classes.addRemove(
+                              intersectionsNode, 'faded-out', 'faded-in');
+                        }, 400);
+                  });
             });
       });
 </script>

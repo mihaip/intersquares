@@ -13,20 +13,37 @@ import data.session
 import data.user
 import data.venue
 
-class UpdateCheckinsHandler(base.handlers.ApiHandler):
+class BaseUpdateCheckinsHandler(base.handlers.ApiHandler):
+  def _get_checkins_for_update(self):
+    other_user_external_id = self.request.get('other_external_id')
+    if other_user_external_id:
+      other_user = data.user.User.get_by_external_id(other_user_external_id)
+      if other_user:
+        return data.checkins.Checkins.get_by_foursquare_id(
+            other_user.foursquare_id)
+      else:
+        raise Exception('Unknown user ' % other_user_external_id)
+
+    return data.checkins.Checkins.get_by_foursquare_id(
+        self._session.foursquare_id)
+
+class UpdateCheckinsHandler(BaseUpdateCheckinsHandler):
   def _get_signed_in(self):
-    checkins = self._get_checkins()
+    checkins = self._get_checkins_for_update()
 
     if checkins.update_needed():
       direction = checkins.length() and 'forward' or 'backward'
       checkins.is_updating = True
       checkins.put()
 
+      update_session = \
+          data.session.Session.get_by_foursquare_id(checkins.foursquare_id)
+
       taskqueue.add(
           queue_name='update-checkins',
           url='/tasks/checkins/update',
           params={
-            'oauth_token': self._session.oauth_token,
+            'oauth_token': update_session.oauth_token,
             'foursquare_id': checkins.foursquare_id,
             'direction': direction
           })
@@ -137,9 +154,9 @@ class UpdateCheckinsTaskHandler(base.handlers.BaseHandler):
 
     self.response.out.write('OK')
 
-class UpdateCheckinsStateHandler(base.handlers.ApiHandler):
+class UpdateCheckinsStateHandler(BaseUpdateCheckinsHandler):
   def _get_signed_in(self):
-    checkins = self._get_checkins()
+    checkins = self._get_checkins_for_update()
 
     logging.info('Getting update state for %s', checkins.foursquare_id)
 

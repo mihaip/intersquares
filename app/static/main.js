@@ -3,36 +3,56 @@
 goog.require('goog.dom');
 goog.require('goog.net.XhrIo');
 
+function updateCheckinsForOtherUser(otherUserId, indicatorNode, successCallback) {
+  updateCheckinsInternal(
+      {
+        extraParams : '?other_external_id=' + encodeURIComponent(otherUserId),
+        pronoun : 'their '
+      },
+      indicatorNode,
+      successCallback);
+}
+
 function updateCheckins(indicatorNode, successCallback) {
-  indicatorNode.innerText = 'Loading your checkins...';
+  updateCheckinsInternal(
+      {
+        extraParams: '',
+        pronoun: 'your '
+      },
+      indicatorNode,
+      successCallback);
+}
+
+function updateCheckinsInternal(params, indicatorNode, successCallback) {
+  indicatorNode.innerText = 'Loading ' + params.pronoun + 'checkins...';
   goog.dom.classes.addRemove(indicatorNode, 'faded-out', 'faded-in');
 
   goog.net.XhrIo.send(
-      '/checkins/update',
+      '/checkins/update' + params.extraParams,
       function() {
-        setTimeout(
-            goog.partial(updateProgress, indicatorNode, successCallback),
+        setTimeout(goog.partial(
+            updateProgress, params, indicatorNode, successCallback),
             1000);
       });
 }
 
-function updateProgress(indicatorNode, successCallback) {
+function updateProgress(params, indicatorNode, successCallback) {
   goog.net.XhrIo.send(
-      '/checkins/update/state',
+      '/checkins/update/state' + params.extraParams,
       function(event) {
         var json = event.target.getResponseJson();
 
         if (json.is_updating) {
           indicatorNode.innerText =
-              'Loading your checkins (got ' + json.checkin_count +
-              ' so far)...';
-          setTimeout(
-              goog.partial(updateProgress, indicatorNode, successCallback),
+              'Loading ' + params.pronoun + 'checkins (got ' +
+                  json.checkin_count + ' so far)...';
+          setTimeout(goog.partial(
+              updateProgress, params, indicatorNode, successCallback),
               1000);
         } else {
           indicatorNode.innerText =
-              'OK, your ' + json.checkin_count +
-              ' checkins are now all loaded.';
+              'OK, ' + params.pronoun + json.checkin_count +
+                  ' checkins are now all loaded.';
           successCallback();
         }
       });
