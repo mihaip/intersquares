@@ -1,3 +1,0 @@
-Scripts (located in scripts/)
-- run.sh: Runs app/ with the App Engine dev server on port 8083
-- deploy.sh: Deploys app/ to prod App Engine
