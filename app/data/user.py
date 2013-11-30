@@ -31,7 +31,9 @@ class User(db.Model):
     self.first_name = user_info['user'].get('firstName', None)
     self.last_name = user_info['user'].get('lastName', None)
     self.home_city = user_info['user'].get('homeCity', None)
-    self.photo_url = user_info['user'].get('photo', None)
+    if 'photo' in user_info['user']:
+      self.photo_url = "%(prefix)s100x100%(suffix)s" % \
+          user_info['user']['photo']
     self.gender = user_info['user'].get('gender', None)
     if 'contact' in user_info['user']:
       self.phone_number = user_info['user']['contact'].get('phone', None)

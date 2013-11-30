@@ -17,12 +17,6 @@ _MAX_CHECKIN_DATA_AGE = datetime.timedelta(hours=1)
 _HERE_NOW_DELTA = 3 * 60 * 60
 _TRAVEL_TIME_DELTA = 5 * 60
 
-# Date far into the future (2038) passed in as a beforeTimestamp to trigger
-# consistent paging behavior (otherwise queries without beforeTimestamp
-# return in reverse-chronological order, and those with it return in
-# chronological order).
-END_OF_TIME = (1 << 31) - 1
-
 class CheckinInterval(object):
   def __init__(self, checkin, next_checkin):
       self.start = checkin.created_at
@@ -115,6 +109,13 @@ class CheckinsData(object):
         newest = checkin
     return newest
 
+  def oldest(self):
+    oldest = None
+    for checkin in self._checkins_by_id.values():
+      if not oldest or oldest.created_at > checkin.created_at:
+        oldest = checkin
+    return oldest
+
   def drop_old_checkins(self):
     sorted_checkins = sorted(
         self._checkins_by_id.values(), key=lambda checkin: checkin.created_at)
@@ -159,12 +160,8 @@ class Checkins(db.Model):
 
   def fetch_older(self, api):
     if self.length():
-      return self._fetch(
-          api,
-          after_timestamp=self.data.newest().created_at,
-          before_timestamp=END_OF_TIME)
-    else:
-      return self._fetch(api, before_timestamp=END_OF_TIME)
+      return self._fetch(api, before_timestamp=self.data.oldest().created_at)
+    return self._fetch(api)
 
   def clear(self):
     self.data = None

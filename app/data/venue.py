@@ -26,7 +26,7 @@ class Venue(db.Model):
         return '%s, %s' % (self.city, self.state)
       return self.city or self.state
 
-    if not self.country or self.country == 'USA':
+    if not self.country or self.country in ('USA', 'United States'):
       return city_state()
 
     return '%s, %s' % (city_state(), self.country)
@@ -53,7 +53,8 @@ class Venue(db.Model):
     venue = Venue(key_name = venue_id, venue_id = venue_id)
     venue.name = sanitize(venue_json_data.get('name', None))
     if venue_json_data.get('categories', []):
-      venue.icon = venue_json_data['categories'][0]['icon']
+      venue.icon = "%(prefix)sbg_32%(suffix)s" % \
+          venue_json_data['categories'][0]['icon']
     else:
       venue.icon = DEFAULT_VENUE_ICON
 
