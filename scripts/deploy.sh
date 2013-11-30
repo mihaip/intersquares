@@ -1,3 +1,3 @@
 #!/bin/sh
 
-appcfg.py --email=mihai.parparita@gmail.com update app
+PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python appcfg.py --oauth2 update app
