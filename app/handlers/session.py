@@ -4,6 +4,7 @@ import urllib
 from google.appengine.api import urlfetch
 from django.utils import simplejson
 
+import base.api
 import base.handlers
 import data.session
 
@@ -63,13 +64,9 @@ class FoursquareCallbackHandler(base.handlers.FoursquareOAuthHandler):
           'Things might be better if you refresh this page\n')
       return
 
-
-    user_info_url = ('https://api.foursquare.com/v2/users/self?' +
-        'oauth_token=%s' % oauth_token)
-    user_info_json = urlfetch.fetch(user_info_url, deadline=10)
-    user_info = simplejson.loads(user_info_json.content)
-
-    foursquare_id = user_info['response']['user']['id']
+    api = base.api.Api(oauth_token)
+    user_info = api.get('users/self')
+    foursquare_id = user_info['user']['id']
 
     session = data.session.Session.get_by_foursquare_id(foursquare_id)
     if session:
